@@ -24,6 +24,13 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
 
                 ]
             },
+            {
+                path: '', component: AppLayoutComponent,
+                children: [
+                    { path: 'Administration', loadChildren: () => import('./views/administration/administration.module').then(m => m.AdministrationModule) },
+
+                ]
+            },
             { path: 'Client', loadChildren: () => import('./views/view-client/view-client.module').then(m => m.ViewClientModule) },
             { path: 'User', loadChildren: () => import('./views/user/user.module').then(m => m.UserModule) },
 

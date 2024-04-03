@@ -47,26 +47,25 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="min-width:5rem">Id</th>
-        <th style="min-width:30rem">Descripción</th>
-        <th style="min-width:15rem">Estado</th>
+        <th style="min-width:15rem">Nombre</th>
+        <th style="min-width:25rem">Descripción</th>
+        <th style="min-width:10rem">Estado</th>
         <th style="min-width:5rem" pFrozenColumn alignFrozen="right">Acciones</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-data>
       <tr>
-        <td style="min-width:5rem" class="font-bold">{{data.vcode}}</td>
-        <td style="min-width:30rem">{{data.vdescription}}</td>
-        <td style="min-width:15rem">{{data.vstate_record}}</td>
+        <td style="min-width:5rem" class="font-bold">{{data.vcode_profile}}</td>
+        <td style="min-width:15rem">{{data.vname_profile}}</td>
+        <td style="min-width:25rem">{{data.vdescription_profile}}</td>        
+        <td style="min-width:10rem">{{data.vstate_record}}</td>
         <td style="min-width:5rem" pFrozenColumn alignFrozen="right">
-
-          <button pButton icon="pi pi-eye" class="text-blue-500 p-button-text"
-          (click)="viewModal(3,data)" pTooltip="Ver Detalle" tooltipPosition="bottom" ></button>
 
           <button pButton icon="pi pi-pencil" class="text-green-500 p-button-text"
           (click)="viewModal(2,data)" pTooltip="Editar" tooltipPosition="bottom"></button>
 
            <button pButton icon="pi pi-trash" class="text-red-500 p-button-text"
-           (click)="deleteTableHeadboard($event,data)" pTooltip="Eliminar" tooltipPosition="bottom"></button>
+           (click)="deleteProfile($event,data)" pTooltip="Eliminar" tooltipPosition="bottom"></button>
  
         </td>
 
@@ -102,18 +101,18 @@
         <div class="grid p-formgrid p-fluid">
             <div class="col-12 md:col-4">
                 <label class="label-filter-text">Nombre</label>
-                <input formControlName="txtName" type="text" pInputText class="p-inputtext p-component p-element" />
+                <input formControlName="txtName" [(ngModel)]="lsProfilesDto.vname_profile"  type="text" pInputText class="p-inputtext p-component p-element" />
             </div>
 
             <div class="col-12 md:col-5">
                 <label class="label-filter-text">Descripcion</label>
-                <input formControlName="txtDescription" type="text" pInputText class="p-inputtext p-component p-element" />
+                <input formControlName="txtDescription" type="text" [(ngModel)]="lsProfilesDto.vdescription_profile" pInputText class="p-inputtext p-component p-element" />
             </div>
 
             <div class="col-12 md:col-3">
                 <label class="label-filter-text">Estado</label>                
                 <p-dropdown formControlName="intState"  [placeholder]="vMessageSelect" 
-                optionLabel="vvalue1" optionValue="id" appendTo="body"
+                optionLabel="vvalue1" optionValue="id" appendTo="body" [(ngModel)]="lsProfilesDto.istate_record"
                 [emptyMessage]="vMessageEmpty" [options]="lstState" ></p-dropdown>
               </div>
         </div>

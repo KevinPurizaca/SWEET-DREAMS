@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { Endpoints } from 'src/app/core/config/endpoints';
-import { MESSAGE_EMPTY, MESSAGE_SELECT } from 'src/app/core/config/mensajes';
+import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
 import { PARAMS_AUXILIAR, ROWS_DEFAULT, ROWS_OPTIONS } from 'src/app/core/config/options';
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
@@ -42,8 +42,10 @@ export class ProfilesComponent implements OnInit{
   paramTDState = PARAMS_AUXILIAR.STATES;
 
   req ={
-    iid_table_headboard:-1,
-    vdescription:'',
+    iid_profile:-1,
+    vname_profile:'',
+    vdescription_profile:'',
+
     istate_record:-1,
     iindex: 0,
     ilimit: ROWS_DEFAULT
@@ -70,44 +72,42 @@ export class ProfilesComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadStateCB();
-    this.loadOptionsByModule();
-
-    
-
+    this.loadData(this.req);   
   }
+
   viewModal(type:number,item:any){
     //Tipe 1 == Mode Register / Tipe 2 == Mode Edit
+    this.lstOptionsModule = [];
+
     switch(type){
       case 1:
-        // this.formRegisterEditTableHeadboard.markAsUntouched();
-        // this.formRegisterEditTableHeadboard.reset();        
+        this.loadOptionsByModule();
+  
         this.lsProfilesDto = {};
         this.lsProfilesDto.iid_profile = 0;
-        this.titleEditRegisterProfile = "Registrar Perfil"
+        this.titleEditRegisterProfile = "Registrar Perfil";
         this.vmEditRegisterProfile = true;
 
         break;
       case 2 :
-        // this.titleEditRegisterTableHeadboard = "Editar Tabla Cabecera"
-        // this.lsTableHeadboardDto = item;
-        // this.vmEditRegisterTableHeadboard = true;
+        this.loadOptionsByProfile(item.iid_profile);
+        this.lsProfilesDto = item;
+        this.titleEditRegisterProfile = "Editar Tabla Cabecera";
+        this.vmEditRegisterProfile = true;
         break;
-        case 3 :
-          // this.formRegisterEditTableDetail.markAsUntouched();
-          // this.formRegisterEditTableDetail.reset(); 
-          // // this.titleEditRegisterTableDetail = "Tabla Detalle"
-          // this.lsTableDetailDto = {};
-          // this.lsTableDetailDto.iid_table_headboard = item.iid_table_headboard;
-          // this.loadDataTableDetail(item.iid_table_headboard);
-          // this.vmEditRegisterTableDetail = true;
-          break;
-
     }
   }
 
 
   loadData(req:any){
-    // this.httpCoreService.post()
+    this.lstProfiles = [];
+    this.httpCoreService.post(req,Endpoints.GetListProfile).subscribe(res=>{
+
+      if(res.isSuccess){
+        this.lstProfiles = res.data;
+        this.totalRecord = res.iTotal_record;
+      }         
+    })
   }
 
   changePage(event: any) {
@@ -145,12 +145,17 @@ export class ProfilesComponent implements OnInit{
     })
   }
 
+  loadOptionsByProfile(iid_profile:number){
+   
+    this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + iid_profile).subscribe(res =>{
+      if(res.isSuccess){
+        this.lstOptionsModule = res.data;
+      }
+    })
+  }
+
 
   saveProfile(){
-
-    // this.loadingSave = true;
-    // this.submitted = true;
-    // this.idPerfilDialog = true;
 
     let value = this.formRegisterEditProfile.value;
     for (let c in this.formRegisterEditProfile.controls) {
@@ -160,6 +165,7 @@ export class ProfilesComponent implements OnInit{
     }
 
     let options: any[] = this.lstOptionsModule.map((x: any) => ({
+      iid_profile_access: x.iid_profile_access || 0,
       iid_module: x.iid_module,
       iid_option: x.iid_option,
       iid_profile : x.iid_profile,
@@ -171,12 +177,46 @@ export class ProfilesComponent implements OnInit{
   
 
     let req ={
-      iid_profile : 0,// x.iid_profile,
-      vname_profile         : value.txtName,
-      vdescription_profile  : value.txtDescription,
+      iid_profile : this.lsProfilesDto.iid_profile,
+      vname_profile         : value.txtName || '',
+      vdescription_profile  : value.txtDescription  || '',
       istate_record         : value.intState,
       lstOptions : options,
     }
+    this.httpCoreService.post(req,Endpoints.RegisterProfileOption).subscribe(res => {
+      if(res.isSuccess){
+        this.loadData(this.req);
+        this.vmEditRegisterProfile = false;
+        this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ACTUALIZADA_REGISTRADA);
+      }else{
+        this.commonService.HanddleErrorMessage(res.message);
+      }
+    })
+  }
+
+  deleteProfile(event: any, item: any) {
+    
+    this.confirmationService.confirm({
+      key: 'deleteDetalle',
+      target: event.target || new EventTarget(),
+      message: MSG_CRUD.MSG_PREGUNTA_ELIMINAR,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí',
+      accept: () => {
+    
+        this.httpCoreService.delete(Endpoints.DeleteProfile + item.iid_profile).subscribe(res => {
+          if (res.isSuccess) {
+            this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ELIMINADA);
+            this.loadData(this.req);
+          }
+          else {
+            this.commonService.HanddleErrorMessage(res);
+          }
+        })
+    
+      },
+      reject: () => { }
+    });
   }
 
   selectCheckAll(select: any, colum: any, event: any) {

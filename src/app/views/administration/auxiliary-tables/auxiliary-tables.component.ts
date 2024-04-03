@@ -42,6 +42,10 @@ export class AuxiliaryTablesComponent implements OnInit {
 
   totalRecord:number = 0;
   first:number = 0;
+
+  totalRecordDetail:number = 0;
+  firstDetail:number = 0;
+
   rowsDefault: number = ROWS_DEFAULT;
   rowsOptions: any[] = ROWS_OPTIONS;
 
@@ -237,7 +241,7 @@ export class AuxiliaryTablesComponent implements OnInit {
       this.httpCoreService.post(this.reqDetail,Endpoints.GetListTableDetail).subscribe(res => {
         if(res.isSuccess){
           this.lstTableDetail = res.data;       
-          this.totalRecord = res.iTotal_record;
+          this.totalRecordDetail = res.iTotal_record;
         }
         else {
           this.commonService.HanddleErrorMessage(res);
@@ -327,6 +331,18 @@ export class AuxiliaryTablesComponent implements OnInit {
     });
   }
 
+  changePageTableDetail(event: any) {
+    this.reqDetail.iindex = event.first;
+    this.reqDetail.ilimit = event.rows;
+    this.firstDetail = event.first;
+    this.loadDataTableDetail(this.reqDetail.iid_table_headboard);
+  }
+
+  hideModalDetail(){
+    this.reqDetail.iindex = 0;
+    this.reqDetail.ilimit = 5;
+    this.vmEditRegisterTableDetail = false;
+  }
 //#endregion
 
   loadStateCB(){

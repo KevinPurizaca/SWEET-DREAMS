@@ -350,15 +350,15 @@
           </tr>
         </ng-template>
       </p-table>
-      <p-paginator [rows]="req.ilimit" [totalRecords]="totalRecord" [rowsPerPageOptions]="rowsOptions"
-      [showCurrentPageReport]="true" [first]="first"  (onPageChange)="changePageTableHeadboard($event)"
+      <p-paginator [rows]="req.ilimit" [totalRecords]="totalRecordDetail" [rowsPerPageOptions]="rowsOptions"
+      [showCurrentPageReport]="true" [first]="firstDetail"  (onPageChange)="changePageTableDetail($event)"
       currentPageReportTemplate="Total : {totalRecords} registros"></p-paginator>
     </p-panel>
 
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <button pButton pRipple label="Cerrar" icon="pi pi-times" class="p-button-text" (click)="vmEditRegisterTableDetail = false;"></button>
+    <button pButton pRipple label="Cerrar" icon="pi pi-times" class="p-button-text" (click)="hideModalDetail()"></button>
     <!-- <button pButton pRipple label="Guardar" icon="pi pi-save" class="p-button-text" [loading]="loadingSave" (click)="saveTableHeadboard()" ></button> -->
   </ng-template>
 </p-dialog>

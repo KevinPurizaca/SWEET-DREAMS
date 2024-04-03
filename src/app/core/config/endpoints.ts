@@ -20,7 +20,16 @@ export const Endpoints = {
   GetListOption  :'/Masters/ModuleOption/GetListOption',
   RegisterOption :'/Masters/ModuleOption/RegisterOption',
   DeleteOption   :'/Masters/ModuleOption/DeleteOption?iid_option=',
-
-
   GetListOptionsByModulo :'/Masters/ModuleOption/GetListOptionsByModule',
+
+  GetListProfile  :'/Profiles/GetListProfile',
+  RegisterProfile :'/Profiles/RegisterProfile',  
+  RegisterProfileOption :'/Profiles/RegisterProfileOption',
+  DeleteProfile   :'/Profiles/DeleteProfile?iid_profile=',
+
+  GetListProfileAccessByProfile  :'/Profiles/GetListProfileAccessByProfile?iid_profile=', 
+
+  GetListProfileAccess  :'/Profiles/GetListProfileAccess',
+  RegisterProfileAccess :'/Profiles/RegisterProfileAccess',  
+  DeleteProfileAccess   :'/Profiles/DeleteProfileAccess?iid_profile_access=',
 }

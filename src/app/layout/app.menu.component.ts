@@ -1,6 +1,8 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
+import { HttpCoreService } from '../core/services/httpCore.service';
+import { Endpoints } from '../core/config/endpoints';
 
 @Component({
     selector: 'app-menu',
@@ -10,18 +12,73 @@ export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService) { }
+    constructor(public layoutService: LayoutService, private httpCoreService: HttpCoreService,) { }
 
     ngOnInit() {
-        this.model = [
-            {
-                label: 'Home',
-                items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
-                    { label: 'Portafolio', icon: 'pi pi-fw pi-home', routerLink: ['/Client/Portafolio'] }
+        this.loadData();
+        //this.setMenu();
+    }
 
+   
+
+    loadData(){
+        //crear meqtodo para qtraer los accesos por perfil
+    this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + 1).subscribe(res =>{
+        if(res.isSuccess){
+            let primernivel:any[] = this.organizarDatosPorModulo(res.data.filter((x:any)=> x.baccess_view === true));
+            this.model.push({
+                items:[
+                    ...primernivel
                 ]
-            },
+            })
+        }
+    })
+}
+
+  
+
+    organizarDatosPorModulo(datos: any[]): any[] {
+        const modules = [];
+    
+        datos.forEach(objeto => {
+            const moduloID = objeto.iid_module;
+    
+            // Buscar si el módulo ya existe en la lista de módulos
+            const moduloExistente = modules.find(modulo => modulo.label === objeto.vname_module);
+    
+            // Si el módulo no existe, agregarlo a la lista de módulos
+            if (!moduloExistente) {
+                modules.push({                   
+                    label: objeto.vname_module,
+                    icon: 'pi pi-'+objeto.vicon_module,
+                    items: []   
+                });
+            }
+    
+            // Buscar el módulo recién agregado o ya existente en la lista
+            const moduloActual = modules.find(modulo => modulo.label === objeto.vname_module);
+    
+            // Agregar la opción al módulo
+            moduloActual.items.push({
+                label: objeto.vname_option,
+                icon: 'pi pi-' + objeto.vicon_option, // Reemplaza 'vicon_option' por el nombre real del campo de ícono
+                routerLink: [objeto.vurl_module, objeto.vurl_option].join('') // Concatena las URL del módulo y la opción
+            });
+        });
+    
+        return modules;
+    }
+    
+      setMenu(){
+        this.model = [
+            // {
+            //     label: 'Home',
+            //     items: [
+            //         { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+            //         { label: 'Portafolio', icon: 'pi pi-fw pi-home', routerLink: ['/Client/Portafolio'] }
+
+            //     ]
+            // },
             {
                 items: [
                     {
@@ -64,8 +121,7 @@ export class AppMenuComponent implements OnInit {
                                 routerLink: ['/Masters/Options-Menu']
                             }
                         ]
-                    },
-
+                    }
                 ]
             },
 
@@ -149,50 +205,9 @@ export class AppMenuComponent implements OnInit {
                     },
                 ]
             },
-            // {
-            //     label: 'Hierarchy',
-            //     items: [
-            //         {
-            //             label: 'Submenu 1', icon: 'pi pi-fw pi-bookmark',
-            //             items: [
-            //                 {
-            //                     label: 'Submenu 1.1', icon: 'pi pi-fw pi-bookmark',
-            //                     items: [
-            //                         { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-            //                         { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-            //                         { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' },
-            //                     ]
-            //                 },
-            //                 {
-            //                     label: 'Submenu 1.2', icon: 'pi pi-fw pi-bookmark',
-            //                     items: [
-            //                         { label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }
-            //                     ]
-            //                 },
-            //             ]
-            //         },
-            //         {
-            //             label: 'Submenu 2', icon: 'pi pi-fw pi-bookmark',
-            //             items: [
-            //                 {
-            //                     label: 'Submenu 2.1', icon: 'pi pi-fw pi-bookmark',
-            //                     items: [
-            //                         { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-            //                         { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' },
-            //                     ]
-            //                 },
-            //                 {
-            //                     label: 'Submenu 2.2', icon: 'pi pi-fw pi-bookmark',
-            //                     items: [
-            //                         { label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' },
-            //                     ]
-            //                 },
-            //             ]
-            //         }
-            //     ]
-            // }
         ];
     }
+
 }
 
 
