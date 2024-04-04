@@ -23,16 +23,19 @@ export class AppMenuComponent implements OnInit {
 
     loadData(){
         //crear meqtodo para qtraer los accesos por perfil
-    this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + 1).subscribe(res =>{
-        if(res.isSuccess){
-            let primernivel:any[] = this.organizarDatosPorModulo(res.data.filter((x:any)=> x.baccess_view === true));
-            this.model.push({
-                items:[
-                    ...primernivel
-                ]
-            })
-        }
-    })
+    // this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + 1).subscribe(res =>{
+    //     if(res.isSuccess){
+    //         let primernivel:any[] = this.organizarDatosPorModulo(res.data.filter((x:any)=> x.baccess_view === true));
+    //         this.model.push({
+    //             items:[
+    //                 ...primernivel
+    //             ]
+    //         })
+    //         localStorage.setItem('menu', JSON.stringify(this.model));
+    //     }
+    // })
+
+      this.model = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : [];  
 }
 
   
@@ -48,9 +51,11 @@ export class AppMenuComponent implements OnInit {
     
             // Si el módulo no existe, agregarlo a la lista de módulos
             if (!moduloExistente) {
-                modules.push({                   
+                modules.push({       
+                    iid_module : objeto.iid_module,           
                     label: objeto.vname_module,
                     icon: 'pi pi-'+objeto.vicon_module,
+                    vurl_module: objeto.vurl_module,
                     items: []   
                 });
             }
@@ -61,8 +66,10 @@ export class AppMenuComponent implements OnInit {
             // Agregar la opción al módulo
             moduloActual.items.push({
                 label: objeto.vname_option,
+                iid_module : objeto.iid_module,           
                 icon: 'pi pi-' + objeto.vicon_option, // Reemplaza 'vicon_option' por el nombre real del campo de ícono
-                routerLink: [objeto.vurl_module, objeto.vurl_option].join('') // Concatena las URL del módulo y la opción
+                routerLink: [objeto.vurl_module, objeto.vurl_option].join(''),// Concatena las URL del módulo y la opción
+                iid_comunity : objeto.iid_comunity,
             });
         });
     

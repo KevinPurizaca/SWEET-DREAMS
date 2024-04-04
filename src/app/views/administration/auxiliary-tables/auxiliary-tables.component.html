@@ -105,6 +105,7 @@
 
           <small  *ngIf="formRegisterEditTableHeadboard.controls['txtDescription'].invalid && formRegisterEditTableHeadboard.controls['txtDescription'].touched"
           class="text-red-600"> Ingrese Descripción</small>
+          <br>
           <small *ngIf="formRegisterEditTableHeadboard.get('txtDescription')?.hasError('pattern')"
           class="text-red-600">Ingrese solo Letras</small>
       </div>
@@ -262,7 +263,7 @@
       styleClass="mt-3" responsiveLayout="scroll"  styleClass="p-datatable-gridlines">
         <ng-template pTemplate="header">
           <tr>
-            <th style="min-width:5rem">Id</th>
+            <!-- <th style="min-width:5rem">Id</th> -->
             <th style="min-width:15rem">Descripción</th>
 
             <th style="min-width:10rem">Valor Texto 1</th>
@@ -283,7 +284,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-data>
           <tr>
-            <td style="min-width:5rem" class="font-bold">{{data.iid_table_detail}}</td>
+            <!-- <td style="min-width:5rem" class="font-bold">{{data.iid_table_detail}}</td> -->
             <td style="min-width:15rem">
               <input  [(ngModel)]="data.vdescription" type="text" pInputText class="p-inputtext p-component p-element"     />
             </td>

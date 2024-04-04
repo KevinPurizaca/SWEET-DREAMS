@@ -9,6 +9,8 @@ export interface ComboModel {
     dvalue1?:any;
     dvalue2?:any;
     dvalue3?:any;
+    bvalue1?:any;
+    bvalue2?:any;
+    bvalue3?:any;
     disabled?: boolean;
-
 }

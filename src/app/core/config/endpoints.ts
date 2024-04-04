@@ -4,32 +4,43 @@ export const Endpoints = {
   PASS_RECOVER: '/seguridad/setUsuarioResetPassword',
   GET_SUBMENU: '/Opcion/GetSubMenu',
 
-  GetListTableHead  :'/Masters/AuxiliaryTables/GetListTableHead',
-  RegisterTableHead :'/Masters/AuxiliaryTables/RegisterTableHead',
-  DeleteTableHead   :'/Masters/AuxiliaryTables/DeleteTableHead?iid_table_headboard=',
+  GetListTableHead  :'/Administration/AuxiliaryTables/GetListTableHead',
+  RegisterTableHead :'/Administration/AuxiliaryTables/RegisterTableHead',
+  DeleteTableHead   :'/Administration/AuxiliaryTables/DeleteTableHead?iid_table_headboard=',
 
-  GetListTableDetail   :'/Masters/AuxiliaryTables/GetListTableDetail',
-  RegisterTableDetail  :'/Masters/AuxiliaryTables/RegisterTableDetail',
-  DeleteTableDetail    :'/Masters/AuxiliaryTables/DeleteTableDetail?iid_table_detail=', 
-  GetListTableDetailCB :'/Masters/AuxiliaryTables/GetListTableDetailCB?iid_table_headboard=',
+  GetListTableDetail   :'/Administration/AuxiliaryTables/GetListTableDetail',
+  RegisterTableDetail  :'/Administration/AuxiliaryTables/RegisterTableDetail',
+  DeleteTableDetail    :'/Administration/AuxiliaryTables/DeleteTableDetail?iid_table_detail=', 
+  GetListTableDetailCB :'/Administration/AuxiliaryTables/GetListTableDetailCB?iid_table_headboard=',
 
-  GetListModule :'/Masters/ModuleOption/GetListModule',
-  RegisterModule:'/Masters/ModuleOption/RegisterModule',
-  DeleteModule  :'/Masters/ModuleOption/DeleteModule?iid_module=',
+  GetListModule :'/Administration/ModuleOption/GetListModule',
+  RegisterModule:'/Administration/ModuleOption/RegisterModule',
+  DeleteModule  :'/Administration/ModuleOption/DeleteModule?iid_module=',
 
-  GetListOption  :'/Masters/ModuleOption/GetListOption',
-  RegisterOption :'/Masters/ModuleOption/RegisterOption',
-  DeleteOption   :'/Masters/ModuleOption/DeleteOption?iid_option=',
-  GetListOptionsByModulo :'/Masters/ModuleOption/GetListOptionsByModule',
+  GetListOption  :'/Administration/ModuleOption/GetListOption',
+  RegisterOption :'/Administration/ModuleOption/RegisterOption',
+  DeleteOption   :'/Administration/ModuleOption/DeleteOption?iid_option=',
+  GetListOptionsByModulo :'/Administration/ModuleOption/GetListOptionsByModule',
 
-  GetListProfile  :'/Profiles/GetListProfile',
-  RegisterProfile :'/Profiles/RegisterProfile',  
-  RegisterProfileOption :'/Profiles/RegisterProfileOption',
-  DeleteProfile   :'/Profiles/DeleteProfile?iid_profile=',
+  GetListProfile  :'/Administration/Profiles/GetListProfile',
+  RegisterProfile :'/Administration/Profiles/RegisterProfile',  
+  RegisterProfileOption :'/Administration/Profiles/RegisterProfileOption',
+  DeleteProfile   :'/Administration/Profiles/DeleteProfile?iid_profile=',
 
-  GetListProfileAccessByProfile  :'/Profiles/GetListProfileAccessByProfile?iid_profile=', 
+  GetListProfileAccessByProfile  :'/Administration/Profiles/GetListProfileAccessByProfile?iid_profile=', 
 
-  GetListProfileAccess  :'/Profiles/GetListProfileAccess',
-  RegisterProfileAccess :'/Profiles/RegisterProfileAccess',  
-  DeleteProfileAccess   :'/Profiles/DeleteProfileAccess?iid_profile_access=',
+  GetListProfileAccess  :'/Administration/Profiles/GetListProfileAccess',
+  RegisterProfileAccess :'/Administration/Profiles/RegisterProfileAccess',  
+  DeleteProfileAccess   :'/Administration/Profiles/DeleteProfileAccess?iid_profile_access=',
+
+  GetListComunity :'/Masters/Comunity/GetListComunity',  
+  RegisterComunity :'/Masters/Comunity/RegisterComunity',  
+  DeleteComunity :'/Masters/Comunity/DeleteComunity?iid_comunity=',
+
+
+  GetListUsers :'/Administration/Users/GetListUsers',
+  RegisterUser:'/Administration/Users/RegisterUser',
+  DeleteUser  :'/Administration/Users/DeleteUser?iid_user=',
+
+  
 }

@@ -1,0 +1,170 @@
+<p-confirmPopup key="deleteDetalle"></p-confirmPopup>
+<p-toast key="tst" [baseZIndex]="99999"></p-toast>
+
+<p-panel header="Busqueda de Comunidades">
+    <form [formGroup]="formSearch">
+        <div class="grid p-formgrid p-fluid">
+            <div class="col-12 md:col-3">
+                <label class="label-filter-text">Nombre</label>
+                <input formControlName="txtName" type="text" pInputText class="p-inputtext p-component p-element" />
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="label-filter-text">Descripcion</label>
+                <input formControlName="txtDescription" type="text" pInputText class="p-inputtext p-component p-element" />
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="label-filter-text">Estado</label>                
+                <p-dropdown formControlName="intState"  [placeholder]="vMessageSelect" 
+                optionLabel="vvalue1" optionValue="id" appendTo="body"
+                [emptyMessage]="vMessageEmpty" [options]="lstState" ></p-dropdown>
+              </div>
+        </div>
+
+        <div class="flex flex-wrap sm:flex-row">
+            <div class="sm:mr-auto mb-3 mr-3">
+              <button pButton label="Agregar Comunidad" type="button" icon="pi pi-plus" class="p-button-help" (click)="viewModal(1,null)"></button>
+            </div>
+            <div class="mb-3 mr-3">
+              <button pButton label="Buscar" icon="pi pi-search" type="submit" class="p-button-outlined p-button-primary"></button>
+            </div>
+            <div class="">
+              <button pButton (click)="formSearch.reset()" label="Limpiar" type="button" icon="pi pi-trash" class="p-button-outlined p-button-secondary"></button>
+            </div>
+          </div>
+    </form>
+</p-panel>
+
+<br>
+
+<p-panel header="Resultado de Comunidades">
+    <p-table [value]="lstComunitys" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="td-id"            >Id</th>
+            <th class="td-name"          >Nombre</th>
+            <th class="td-description"    >Descripcion</th>
+            <th class="td-number-users"   >Nro Usuarios</th>
+            <th class="td-number-admins"  >Nro Admins</th>
+            <th class="td-percent-support">% Apoyo</th>
+            <th class="td-image"          >Imagen</th>
+            <th class="td-date-create"    >Fecha Creada</th>
+            <th class="td-state"          >Estado</th>    
+            <th class="td-actions" pFrozenColumn alignFrozen="right">Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+          <tr>
+            <td class="td-id font-bold"     >{{data.iid_comunity}}</td>
+            <td class="td-name"             >{{data.vname_comunity}}</td>
+            <td class="td-description"      >{{data.vdescription_comunity}}</td>
+
+            <td class="td-number-users"     >
+              <span class="flex justify-content-end">{{data.iusers_pcomunity}}</span>              
+            </td>
+
+            <td class="td-number-admins"    >              
+              <span class="flex justify-content-end">{{data.iadmins_comunity}}</span>
+            </td>
+
+            <td class="td-percent-support"  >
+              <span class="flex justify-content-end">{{data.dporcent_support }} %</span>
+            </td>
+            <td class="td-image p-1 m-0"    >      
+              <div class="flex justify-content-center p-0 m-0 ">
+                <p-image class="p-0 m-0" [src]="data.vfirebase_url_comunity" alt="Image" appendTo="body" width="50" [preview]="true"></p-image>
+              </div>      
+            </td>
+            <td class="td-date-create"      >{{data.ddate_create | DateFormatPipe}}</td>
+            <td class="td-state"            >{{data.vstate_record}}</td>
+            <td class="td-actions" pFrozenColumn  class="font-bold" alignFrozen="right"> 
+              <button pButton icon="pi pi-pencil" class="text-green-500 p-button-text"
+              (click)="viewModal(2,data)" pTooltip="Editar" tooltipPosition="bottom"></button>
+    
+              <button pButton icon="pi pi-trash" class="text-red-500 p-button-text"
+              (click)="deleteComunity($event,data)" pTooltip="Eliminar" tooltipPosition="bottom"></button>
+          </td>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">No se encontró Información.</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td colspan="7">
+              Cargando información. Espere por favor.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-paginator [rows]="req.ilimit" [totalRecords]="totalRecord" [rowsPerPageOptions]="rowsOptions"
+      [showCurrentPageReport]="true" [first]="first"
+      currentPageReportTemplate="Total : {totalRecords} registros"></p-paginator>
+</p-panel>
+
+
+
+<p-dialog [(visible)]="vmEditRegisterComunity" [draggable]="false" [style]="{width: '600px',height:'575px'}"  [closable]="false" 
+          [header]="titleEditRegisterComunity" [modal]="true" >
+  <ng-template pTemplate="content">
+    <br>
+   <form [formGroup]="formRegisterEdit">
+    <div class="grid p-formgrid p-fluid ">
+      
+      <div class="col-12 md:col-4">
+        <label class="label-filter-text">Nombre</label>
+        <input formControlName="txtName" type="text" pInputText class="p-inputtext p-component p-element" 
+          [(ngModel)]="lsComunityDto.vname_comunity"    />
+
+          <small  *ngIf="formRegisterEdit.controls['txtName'].invalid && formRegisterEdit.controls['txtName'].touched"
+          class="text-red-600"> Ingrese Nombre</small>
+          <small *ngIf="formRegisterEdit.get('txtName')?.hasError('pattern')"
+          class="text-red-600">Ingrese solo Letras</small>
+      </div>
+
+      <div class="col-12 md:col-5">
+        <label class="label-filter-text">Descripcion</label>
+        <input formControlName="txtDescription" type="text" pInputText class="p-inputtext p-component p-element"   
+        [(ngModel)]="lsComunityDto.vdescription_comunity"   />
+
+          <small  *ngIf="formRegisterEdit.controls['txtDescription'].invalid && formRegisterEdit.controls['txtDescription'].touched"
+          class="text-red-600"> Ingrese Nombre</small>
+          <small *ngIf="formRegisterEdit.get('txtDescription')?.hasError('pattern')"
+          class="text-red-600">Ingrese solo Letras</small>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <label class="label-filter-text">Estado</label>                
+        <p-dropdown formControlName="intState" [options]="lstState"  optionLabel="vvalue1" optionValue="id" appendTo="body"
+        [emptyMessage]="vMessageEmpty" [placeholder]="vMessageSelect"  [(ngModel)]="lsComunityDto.istate_record" ></p-dropdown>
+
+        <small  *ngIf="formRegisterEdit.controls['intState'].invalid && formRegisterEdit.controls['intState'].touched"
+        class="text-red-600"> Seleccion Estado.</small>
+      </div>
+
+
+      <div class="col-12 md:col-12">
+        <button  pButton pRipple label="Seleccionar Imagen"(click)="fileInput2.click()" icon="pi pi-image" 
+        class="shadow-2 hover:shadow-8 h-3rem w-13rem p-button-info"></button>
+        <input type="file" #fileInput2 [accept]="acceptFiles" style="display: none" (change)="agregarArchivo($event)">
+
+
+    </div>
+    <div class="col-12 md:col-12 flex justify-content-center ">
+      <p-image [src]="this.lsComunityDto.iid_comunity === 0 ? imagenURL : (editImagen ? imagenURL: lsComunityDto.vfirebase_url_comunity)"
+       alt="Image" appendTo="body" width="235" [preview]="true"></p-image>
+    </div>
+
+    </div>   
+   </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cerrar" icon="pi pi-times" class="p-button-text" (click)="hideModal()"></button>
+    <button pButton pRipple label="Guardar" icon="pi pi-save" class="p-button-text" [loading]="loadingSave" (click)="saveComunity()" ></button>
+  </ng-template>
+</p-dialog>

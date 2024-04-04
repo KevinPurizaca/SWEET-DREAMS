@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpCoreService } from "../services/httpCore.service";
 import { CommonService } from "../services/common.service";
 import { environment } from "src/environments/environment";
+import { Endpoints } from "../config/endpoints";
 // import * as CryptoJS from 'crypto-js';
 
 @Injectable()
@@ -70,30 +71,31 @@ export class UtilService {
 
     getSeguridad(router:any) {
         const menu =  this.getItemStorage('menu');
-
         if(menu){
-            let sin_sub_menu:any = menu.find((x:any) => x.vurl === router);
-            let opciones:any;
+         let sin_sub_menu:any = menu.find((x:any) => x.vurl === router);
+         let opciones:any;
+ 
+         if(sin_sub_menu ){
+             const _opcion = sin_sub_menu.opciones[0];
+             if(_opcion){
+                 opciones =_opcion;
+              }
+         }
+         else{
+             const modulo = '/'+router.split('/')[1];
+            //  const opcion = '/'+router.split('/')[2];
+
+             const permisos = menu[0].items.find((x:any) => x.vurl_module === modulo);
+             opciones = permisos.items.find((x:any) => x.routerLink === router); //tiene 2 niveles
+         }       
+         return opciones; 
+     }
     
-            if(sin_sub_menu ){
-                const _opcion = sin_sub_menu.opciones[0];
-                if(_opcion){
-                    opciones =_opcion;
-                 }
-            }
-            else{
-                const modulo = '/'+router.split('/')[1];
-                const opcion = '/'+router.split('/')[2];
-                const permisos = menu.find((x:any) => x.vurl === modulo);
-                opciones = permisos.opciones.find((x:any) => x.vurl === opcion); 
-            }       
-            return opciones; 
-        }
 
     }
 
     getItemStorage(item:any):any{
-        let _item = localStorage.getItem(item);
+        let _item = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : []; //localStorage.getItem(item);
         if(_item){
             // const bytes = CryptoJS.AES.decrypt(_item, this.secretKey);
             // const valorDesencriptado = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))  ;

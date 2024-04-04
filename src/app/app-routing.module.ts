@@ -27,6 +27,13 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
             {
                 path: '', component: AppLayoutComponent,
                 children: [
+                    { path: 'Group-Comunity', loadChildren: () => import('./views/Comunitys/comunitys.module').then(m => m.ComunitysModule) },
+
+                ]
+            },
+                      {
+                path: '', component: AppLayoutComponent,
+                children: [
                     { path: 'Administration', loadChildren: () => import('./views/administration/administration.module').then(m => m.AdministrationModule) },
 
                 ]

@@ -11,12 +11,12 @@ import { Endpoints } from '../config/endpoints';
 export class HttpCoreService {
 
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private router: Router,
     private messageService: MessageService
 
 
-    ) { }
+  ) { }
 
   public get(collection: string): Observable<any> {
     const url = environment.UrlBase + collection;
@@ -50,24 +50,24 @@ export class HttpCoreService {
 
       }),
       catchError(err => {
-         return err;//this.EstatusError(err);
+        return err;//this.EstatusError(err);
       }),
     );
   }
-  async getExportacion(collection: string,nombreArchivo:string): Promise<void>{
+  async getExportacion(collection: string, nombreArchivo: string): Promise<void> {
     const url = environment.UrlBase + collection;
     let token = localStorage.getItem('token');
 
     const settings = {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        }
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }
     }
 
-    const response = await fetch(url,settings);
+    const response = await fetch(url, settings);
     const blob = await response.blob();
     //const name_file:string = nombreArchivo+`_${moment().format('YYYYMMDD_HHMMSS')}.xlsx`;
     let link = document.createElement('a');
@@ -77,7 +77,7 @@ export class HttpCoreService {
 
 
 
-  public getFromData( collection: string, body: FormData): Observable<any> {
+  public getFromData(collection: string, body: FormData): Observable<any> {
     const jsonrequest = JSON.stringify(body);
     const url = environment.UrlBase + collection;
 
@@ -112,14 +112,14 @@ export class HttpCoreService {
       tap((data: any) => {
 
       }),
-      catchError(err => {        
+      catchError(err => {
         return this.EstatusError(err);
       }),
     );
   }
 
 
-  public postFromData( collection: string, body: FormData): Observable<any> {
+  public postFromData(collection: string, body: FormData): Observable<any> {
     const jsonrequest = JSON.stringify(body);
     const url = environment.UrlBase + collection;
 
@@ -140,23 +140,23 @@ export class HttpCoreService {
     );
   }
 
-  async postExportacion(req: any,collection: string,nombreArchivo:string): Promise<void>{
+  async postExportacion(req: any, collection: string, nombreArchivo: string): Promise<void> {
     const url = environment.UrlBase + collection;
     let token = localStorage.getItem('token');
 
     const settings = {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-            //Request:JSON.stringify(req)
-        },
-        body: JSON.stringify(req)
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+        //Request:JSON.stringify(req)
+      },
+      body: JSON.stringify(req)
 
     }
 
-    const response = await fetch(url,settings);
+    const response = await fetch(url, settings);
     const blob = await response.blob();
     let link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
@@ -198,39 +198,44 @@ export class HttpCoreService {
 
       }),
       catchError(err => {
-        return  this.EstatusError(err);
+        return this.EstatusError(err);
       }),
     );
   }
 
   EstatusError(err: any): any {
+    console.log("err:", err)
     let message_error: string = '';
-  
+
     switch (err.status) {
       case 0:
         message_error = `Error, la conexión con el servidor no es posible: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
         console.error(message_error);
-        this.messageService.add({key: 'tst', severity: 'error',summary: 'Error Message',detail: message_error });
-        throw message_error;
-      case 401:
-        message_error = `Error, Falta de Autorización: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({key: 'tst', severity: 'error',summary: 'Error Message',detail: message_error });
-        console.error(message_error);
-        this.router.navigate(['/login']);
+        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         throw message_error;
       case 400:
         message_error = `Error, Servicio con Problemas: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({key: 'tst', severity: 'error',summary: 'Error Message',detail: message_error });
+        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         console.error(message_error);
+        throw message_error;
+      case 401:
+        message_error = `Error, Falta de Autorización: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
+        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        console.error(message_error);
+        this.router.navigate(['/login']);
         throw message_error;
       case 403:
         message_error = `Error, Falta de permisos para el servicio: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({key: 'tst', severity: 'error',summary: 'Error Message',detail: message_error });
+        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        console.error(message_error);
+        throw message_error;
+      case 404:
+        message_error = `Error, Recurso no encontrado. Verifica la URL e intenta nuevamente.: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
+        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         console.error(message_error);
         throw message_error;
       default:
-        this.messageService.add({key: 'tst', severity: 'error',summary: 'Error Message',detail: err.error });
-
+        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: err.error });
         throw `Error en la fuente. Detalles: ${err.error}`;
     }
   }

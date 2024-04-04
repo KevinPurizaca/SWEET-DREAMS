@@ -1,0 +1,63 @@
+<br>
+<p-panel header="Tabla de Usuarios" [toggleable]="false" class="line-height-3">
+
+  <p-table [value]="lstUsers" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll"
+  styleClass="p-datatable-gridlines">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="td-id">Id</th>
+        <th class="td-name">Nombres</th>
+        <th class="td-firstname">Apellidos</th>
+        <th class="td-profile">Perfil</th>
+        <th class="td-range">Rango</th>
+        <th class="td-comunity">Comunidad</th>
+        <th class="td-phone">Nro. Telefonico</th>
+        <th class="td-channel">Canal</th>
+        <th class="td-url-channel">Link Canal</th>
+        <th class="td-state">Estado</th>
+        <th class="td-actions" pFrozenColumn alignFrozen="right">Acciones</th>
+      </tr> 
+    </ng-template>
+    <ng-template pTemplate="body" let-data>
+      <tr>
+        <td class="td-id" class="font-bold">{{data.vcode}}</td>
+        <td class="td-name">{{data.vfirst_name}}</td>
+        <td class="td-firstname">{{data.vlast_name}}</td>
+        <td class="td-profile">{{data.vname_profile}}</td>
+        <td class="td-range">{{data.vrange_member}}</td>
+        <td class="td-comunity">{{data.vname_comunity}}</td>
+
+        
+        <td class="td-phone">{{data.vphone}}</td>
+        <td class="td-channel">{{data.vchannel_twitch}}</td>
+        <td class="td-url-channel">          
+          <a [href]="data.vurl_channel_twitch" target="_blank">{{data.vurl_channel_twitch}}</a>
+        </td>
+        <td class="td-state">{{data.vstate_record}}</td>
+        <td class="td-actions" pFrozenColumn alignFrozen="right">
+          <!-- <button pButton icon="pi pi-pencil" class="text-green-500 p-button-text"
+          (click)="viewModal(2,data)" pTooltip="Editar" tooltipPosition="bottom"></button>
+
+          <button pButton icon="pi pi-trash" class="text-red-500 p-button-text"
+          (click)="deleteComunity($event,data)" pTooltip="Eliminar" tooltipPosition="bottom"></button> -->
+        </td>
+
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7">No se encontró Información.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="7">
+          Cargando información. Espere por favor.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-paginator [rows]="req.ilimit" [totalRecords]="totalRecord" [rowsPerPageOptions]="rowsOptions"
+  [showCurrentPageReport]="true" [first]="first"
+  currentPageReportTemplate="Total : {totalRecords} registros"></p-paginator>
+</p-panel>

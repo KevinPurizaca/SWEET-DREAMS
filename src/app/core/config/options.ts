@@ -7,12 +7,17 @@ export const TIME_RETURN_TRAY = 3000;
 export enum PARAMS_AUXILIAR {
     STATES = '1',
     TIPO_DOCUMENTO ='2',
+    DEPARTAMENTOS_PERU ='3',
+    MONEDA ='4',
+    DIA_SEMANA ='5',
+    RANGE_USER = '6'
 }
 
 export const PATTERNS = {
   Letras : '[a-zA-ZáéíóúÁÉÍÓÚ ]*',
   Letras_Numeros :'[a-zA-Z0-9 ]*',
   Numeros :'[0-9 ]*',
+
   Email : '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
 }
 
@@ -36,4 +41,11 @@ export const MAX_LENGTH_FILES =  45 ;
 
 
 export const VALUE_MILLIONS = 1000000;
+
+
+export interface TimeZone {
+  name: string;
+  startHour: number;
+  endHour: number;
+}
 

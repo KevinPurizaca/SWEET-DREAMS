@@ -1,48 +1,58 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MESSAGE_EMPTY, MESSAGE_SELECT } from 'src/app/core/config/mensajes';
-import { PATTERNS, ROWS_DEFAULT, ROWS_OPTIONS } from 'src/app/core/config/options';
+import { ConfirmationService } from 'primeng/api';
+import { Endpoints } from 'src/app/core/config/endpoints';
+import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
+import { PARAMS_AUXILIAR, PATTERNS, ROWS_DEFAULT, ROWS_OPTIONS, TimeZone } from 'src/app/core/config/options';
+import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
 import { ComboModel } from 'src/app/core/util/combo';
 import { SharedModule } from 'src/app/shared/shared.module';
 @Component({
   selector: 'app-users',
   standalone: true,
-   imports: [
+  imports: [
     SharedModule
-   ],
+  ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
-export class UsersComponent implements OnInit{
+export class UsersComponent implements OnInit {
 
-  formSearch:FormGroup;
-  formRegisterEdit:FormGroup;
+  formSearch: FormGroup;
+  formRegisterEdit: FormGroup;
 
-  vmessageEmpty : string=MESSAGE_EMPTY;
-  vmessageSelect : string=MESSAGE_SELECT;
+  vMessageEmpty: string = MESSAGE_EMPTY;
+  vMessageSelect: string = MESSAGE_SELECT;
 
-  lstProfile :ComboModel[]=[];
-  lstStatus :ComboModel[]=[];
-  lstDepartment :ComboModel[]=[];
-  lstTipeDocument :ComboModel[]=[];
+  lstProfile: ComboModel[] = [];
+  lstStatus: ComboModel[] = [];
+  lstRangeUser: ComboModel[] = [];
+  lstComunityUser: ComboModel[] = [];
 
-  lstUsers:any[]=[];
-  
-  lsUserDto!:any ;
+  lstDepartment: ComboModel[] = [];
+  lstTipeDocument: ComboModel[] = [];
 
-  titleEditRegisterUser:string ='';
+  paramTDState = PARAMS_AUXILIAR.STATES;
+  paramTDRangeUser = PARAMS_AUXILIAR.RANGE_USER;
 
 
-  vmEditRegisterUser:boolean = false;
+  lstUsers: any[] = [];
+
+  lsUserDto!: any;
+
+  titleEditRegisterUser: string = '';
+
+
+  vmEditRegisterUser: boolean = false;
   submitted: boolean = false;
 
-  totalRecord:number = 0;
-  first:number = 0;
+  totalRecord: number = 0;
+  first: number = 0;
   rowsDefault: number = ROWS_DEFAULT;
   rowsOptions: any[] = ROWS_OPTIONS;
 
-  req ={ 
+  req = {
     iid_user: -1,
     vcode: "",
     vfirst_name: "",
@@ -54,61 +64,72 @@ export class UsersComponent implements OnInit{
     vaddress: "",
     iid_department: -1,
     iid_profile: -1,
+    iid_comunity: -1,
     istate_record: -1,
     iindex: 0,
     ilimit: ROWS_DEFAULT,
   }
 
   constructor(
-    fs:FormBuilder,
-    fre:FormBuilder,
+    fs: FormBuilder,
+    fre: FormBuilder,
     private httpCoreService: HttpCoreService,
+    private commonService: CommonService,
+    private confirmationService: ConfirmationService,
 
-    )
-  {
+  ) {
     this.formSearch = fs.group({
-      txtFirstName:['',[Validators.pattern(PATTERNS.Letras)]],
-      txtLastName:['',[Validators.pattern(PATTERNS.Letras)]],
-      intProfile:[-1],
-      intStatus:[-1],
-      txtPhoneNumber:[null,[Validators.pattern(PATTERNS.Numeros)]],
-      txtEmail:[''],
-      intDepartment:[-1],
-      txtDocumentNumber:[null,[Validators.pattern(PATTERNS.Numeros)]],
-      });
+      txtFirstName: ['', [Validators.pattern(PATTERNS.Letras)]],
+      txtLastName: ['', [Validators.pattern(PATTERNS.Letras)]],
+      intProfile: [-1],
+      intStatus: [-1],
+      txtPhoneNumber: [null, [Validators.pattern(PATTERNS.Numeros)]],
+      txtEmail: [''],
+      intDepartment: [-1],
+      txtDocumentNumber: [null, [Validators.pattern(PATTERNS.Numeros)]],
+    });
 
-      this.formRegisterEdit = fre.group({
-        txtFirstName:['',[Validators.pattern(PATTERNS.Letras), Validators.required]],
-        txtLastName:['',[Validators.pattern(PATTERNS.Letras), Validators.required]],
-        intProfile:[-1],
-        intStatus:[-1],
-        txtPhoneNumber:[null,[Validators.pattern(PATTERNS.Numeros), Validators.required]],
-        txtEmail:['',[Validators.pattern(PATTERNS.Email), Validators.required]],
-        intDepartment:[-1],
-        txtDocumentNumber:[null,[Validators.pattern(PATTERNS.Numeros), Validators.required]],
-        intTipeDocument:[-1],
+    this.formRegisterEdit = fre.group({
+      txtFirstName: ['', [Validators.pattern(PATTERNS.Letras), Validators.required]],
+      txtLastName: ['',/*[Validators.pattern(PATTERNS.Letras), Validators.required]*/],
+      intProfile: [-1],
+      intRangeUser: [-1],
+      intStatus: [-1],
+      intComunity: [-1, [Validators.required]],
 
-        });
-      
+      txtPhoneNumber: [null, [Validators.required]],
+      // txtEmail:['',[Validators.pattern(PATTERNS.Email), Validators.required]],
+      // intDepartment:[-1],
+      // txtDocumentNumber:[null,[Validators.pattern(PATTERNS.Numeros), Validators.required]],
+      // intTipeDocument:[-1],
+      txtIdTwitch: ['', [Validators.required]],
+      txtLinkTwitch: ['', [Validators.required]],
+
+
+    });
+
   }
 
   ngOnInit(): void {
-    this.loadData(this.req)
+    this.loadDataProfile();
+    this.loadDataStatus();
+    this.loadDataRangeUser();
+    this.loadDataComunityUser();
+    this.loadData(this.req);
   }
 
 
-  viewModal(type:number,item:any){
-    //Tipe 1 == Mode Register / Tipe 2 == Mode Edit
-    switch(type){
+  viewModal(type: number, item: any) {
+    switch (type) {
       case 1:
         this.formRegisterEdit.markAsUntouched();
-        this.formRegisterEdit.reset();        
+        this.formRegisterEdit.reset();
         this.lsUserDto = {};
-        this.lsUserDto.iid_usuario = 0;
+        this.lsUserDto.iid_user = 0;
         this.titleEditRegisterUser = "Registrar Usuario"
         this.vmEditRegisterUser = true;
         break;
-      case 2 :
+      case 2:
         this.titleEditRegisterUser = "Editar Usuario"
         this.lsUserDto = item;
         this.vmEditRegisterUser = true;
@@ -116,7 +137,7 @@ export class UsersComponent implements OnInit{
     }
   }
 
-  saveUser(){
+  saveUser() {
     this.submitted = true;
 
     let value = this.formRegisterEdit.value;
@@ -125,16 +146,159 @@ export class UsersComponent implements OnInit{
     }
 
     if (this.formRegisterEdit.valid) {
-  }
+
+      let req = {
+        iid_user: this.lsUserDto.iid_user,
+        vfirst_name: value.txtFirstName,
+        vlast_name: value.txtLastName,
+        vphone: value.txtPhoneNumber,
+        iid_profile: value.intProfile,
+        iid_range_member: value.intRangeUser,
+        vurl_channel_twitch: value.txtLinkTwitch,
+        vchannel_twitch: value.txtIdTwitch,
+        iid_comunity: value.intComunity,
+        istate_record: value.intStatus,
+      }
+
+      this.httpCoreService.post(req, Endpoints.RegisterUser).subscribe(res => {
+        if (res.isSuccess) {
+          this.loadData(this.req);
+          this.vmEditRegisterUser = false;
+          this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ACTUALIZADA_REGISTRADA);
+        }
+        else {
+          this.commonService.HanddleErrorMessage(res);
+
+        }
+      })
+
+
+    }
   }
 
-  loadData(req:any){
-    this.httpCoreService.post(req,'/Masters/Users/GetListUsers').subscribe(res =>{
+  loadData(req: any) {
+    this.httpCoreService.post(req, Endpoints.GetListUsers).subscribe(res => {
 
-      if(res.isSuccess){
-        this.lstUsers = res.data;       
+      if (res.isSuccess) {
+        this.lstUsers = res.data;
         this.totalRecord = res.iTotal_record;
       }
     });
   }
+
+  isUserMember: boolean = false;
+  onSelectProfile(event): void {
+    this.isUserMember = this.lstProfile.find((x: any) => x.id == event.value).bvalue1;
+  }
+
+  loadDataProfile() {
+    let req = {
+      iid_profile: -1,
+      vcode: "",
+      vdescription: "",
+      istate_record: -1,
+      iindex: 0,
+      ilimit: 10000,
+    }
+    this.httpCoreService.post(req, Endpoints.GetListProfile).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstProfile = res.data.map((x: any) => {
+          return {
+            id: x.iid_profile,
+            vvalue1: x.vname_profile,
+            bvalue1: x.buser_member,
+          }
+        });
+
+
+
+      }
+    });
+  }
+
+  loadDataStatus() {
+    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDState).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstStatus = res.data;
+      }
+    });
+  }
+
+  loadDataRangeUser() {
+    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDRangeUser).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstRangeUser = res.data;
+      }
+    });
+  }
+
+
+
+  loadDataComunityUser() {
+    let req = {
+      iid_comunity: -1,
+      vname_comunity: '',
+      vdescription_comunity: '',
+      istate_record: -1,
+      iindex: 0,
+      ilimit: 1000
+    }
+
+    this.httpCoreService.post(req,Endpoints.GetListComunity).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstComunityUser = res.data.map((x: any) => {
+          return {
+            id: x.iid_comunity,
+            vvalue1: x.vname_comunity
+          }
+        });;
+      }
+    });
+  }
+  // timeZones: TimeZone[] = [
+  //   { name: 'Hora Colombia', startHour: 10, endHour: 23 },
+  //   { name: 'Hora España', startHour: 17, endHour: 6 },
+  //   { name: 'Hora Mexico', startHour: 12, endHour: 1 },
+  //   { name: 'Hora Argentina', startHour: 9, endHour: 22 },
+
+  // ];
+
+  // selectedTimeZones: TimeZone[] = [];
+
+  // updateTimeZoneHours(timeZone: any) {
+  //   this.selectedTimeZones = [];
+  //   if (timeZone === 'Hora Colombia') {
+  //     this.selectedTimeZones.push({ name: 'Hora Colombia', startHour: 10, endHour: 23 });
+  //   } else if (timeZone === 'Hora España') {
+  //     this.selectedTimeZones.push({ name: 'Hora España', startHour: 17, endHour: 6 });
+  //   }
+  //   else if (timeZone === 'Hora Argentina') {
+  //     this.selectedTimeZones.push({ name: 'Hora Argentina', startHour: 12, endHour: 1 });
+  //   }
+  //   else if (timeZone === 'Hora Mexico') {
+  //     this.selectedTimeZones.push({ name: 'Hora Mexico', startHour: 9, endHour: 22 });
+  //   }
+
+  // }
+
+  // generateHoursRange(start: number, end: number): string[] {
+  //   // console.log("start:", start)
+  //   // console.log("end:", end)
+  //   const hoursRange: string[] = [];
+  //   for (let i = 0; i < 14; i++) {//i =14; i<= 6
+  //     // debugger
+  //     let inicio = start + i;
+  //     //console.log("inicio:", inicio)
+
+  //     if(inicio == 23){
+  //       hoursRange.push(`${inicio < 10 ? '0' + inicio : inicio}:00`);
+  //       console.log("hoursRange:", hoursRange)
+  //       start = -1 - i;      
+  //     }
+  //     else{
+  //       hoursRange.push(`${inicio< 10 ? '0' + inicio : inicio}:00`);
+  //     }
+  //   }
+  //   return hoursRange;
+  // }
 }

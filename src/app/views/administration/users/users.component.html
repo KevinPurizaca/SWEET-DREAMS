@@ -1,3 +1,19 @@
+<!-- <div>
+  <h3>Selecciona la zona horaria:</h3>
+  <select (change)="updateTimeZoneHours($event.target.value)">
+    <option *ngFor="let timeZone of timeZones" [value]="timeZone.name">{{ timeZone.name }}</option>
+  </select>
+</div>
+
+<div *ngFor="let timeZone of selectedTimeZones">
+  <h4>{{ timeZone.name }}</h4>
+  <ul>
+    <li *ngFor="let hour of generateHoursRange(timeZone.startHour, timeZone.endHour)">{{ hour }}</li>
+  </ul>
+</div>
+ -->
+
+
 <p-panel header="Búsqueda de Usuarios" [toggleable]="true" class="line-height-3">
    
         <form [formGroup]="formSearch">
@@ -19,16 +35,16 @@
          
               <div class="col-12 md:col-3">
                 <label class="label-filter-text">Perfil</label>                
-                <p-dropdown formControlName="intProfile"  [placeholder]="vmessageSelect" 
+                <p-dropdown formControlName="intProfile"  [placeholder]="vMessageSelect" 
                 optionLabel="value" optionValue="id" appendTo="body"
-                [emptyMessage]="vmessageEmpty" [options]="lstProfile" ></p-dropdown>
+                [emptyMessage]="vMessageEmpty" [options]="lstProfile" ></p-dropdown>
               </div>
 
               <div class="col-12 md:col-3">
                 <label class="label-filter-text">Estado</label>                
-                <p-dropdown formControlName="intStatus"  [placeholder]="vmessageSelect" 
+                <p-dropdown formControlName="intStatus"  [placeholder]="vMessageSelect" 
                 optionLabel="value" optionValue="id" appendTo="body"
-                [emptyMessage]="vmessageEmpty" [options]="lstStatus" ></p-dropdown>
+                [emptyMessage]="vMessageEmpty" [options]="lstStatus" ></p-dropdown>
               </div>
 
               <div class="col-12 md:col-3">
@@ -37,24 +53,24 @@
                 [maxlength]="9" autocomplete="off"></p-inputNumber>          
               </div>
          
-              <div class="col-12 md:col-3">
+              <!-- <div class="col-12 md:col-3">
                 <label class="label-filter-text">Nro. Documento</label>
                 <p-inputNumber formControlName="txtDocumentNumber"  inputId="withoutgrouping" [useGrouping]="false"
                  [maxlength]="8" autocomplete="off">
                 </p-inputNumber>          
-              </div>
+              </div> -->
          
               <div class="col-12 md:col-3">
                 <label class="label-filter-text">Correo Electronico</label>
                 <input formControlName="txtEmail" type="text" pInputText class="p-inputtext p-component p-element" />
               </div>
          
-              <div class="col-12 md:col-3">
+              <!-- <div class="col-12 md:col-3">
                 <label class="label-filter-text">Departamento</label>                
                 <p-dropdown formControlName="intDepartment"  [placeholder]="vmessageSelect" optionLabel="value" optionValue="id"
                 [emptyMessage]="vmessageEmpty" [options]="lstDepartment" appendTo="body"></p-dropdown>
-              </div>
-            </div>
+              </div>-->
+            </div> 
 
             <div class="flex flex-wrap sm:flex-row">
               <div class="sm:mr-auto mb-3 mr-3">
@@ -78,34 +94,41 @@
   styleClass="p-datatable-gridlines">
     <ng-template pTemplate="header">
       <tr>
-        <th style="min-width:150px">Id</th>
-        <th style="min-width:150px">Nombres</th>
-        <th style="min-width:150px">Apellidos</th>
-        <th style="min-width:150px">Perfil</th>
-        <th style="min-width:150px">Correo Electronico</th>
-        <th style="min-width:150px">Nro. Telefonico</th>
-        <th style="min-width:150px">Tipo Documento</th>
-        <th style="min-width:150px">Nro. Documento</th>
-        <th style="min-width:150px">Departamento</th>
-        <th style="min-width:150px">Estado</th>
-
-        <th style="min-width:200px" pFrozenColumn alignFrozen="right">Acciones</th>
-      </tr>
+        <th class="td-id">Id</th>
+        <th class="td-name">Nombres</th>
+        <th class="td-firstname">Apellidos</th>
+        <th class="td-profile">Perfil</th>
+        <th class="td-range">Rango</th>
+        <th class="td-comunity">Comunidad</th>
+        <th class="td-phone">Nro. Telefonico</th>
+        <th class="td-channel">Canal</th>
+        <th class="td-url-channel">Link Canal</th>
+        <th class="td-state">Estado</th>
+        <th class="td-actions" pFrozenColumn alignFrozen="right">Acciones</th>
+      </tr> 
     </ng-template>
     <ng-template pTemplate="body" let-data>
       <tr>
-        <td style="width:200px" class="font-bold">{{data.vcode}}</td>
-        <td style="width:200px">{{data.vfirst_name}}</td>
-        <td style="width:200px">{{data.vlast_name}}</td>
-        <td style="width:200px">{{data.date}}</td>
-        <td style="width:200px">{{data.vemail}}</td>
-        <td style="width:200px">{{data.iphone}}</td>
-        <td style="width:200px">{{data.itype_document}}</td>
-        <td style="width:200px">{{data.inumber_document}}</td>
-        <td style="width:200px">{{data.iid_department}}</td>
-        <td style="width:200px">{{data.vstate_record}}</td>
-        <td style="width:200px" pFrozenColumn alignFrozen="right">
+        <td class="td-id" class="font-bold">{{data.vcode}}</td>
+        <td class="td-name">{{data.vfirst_name}}</td>
+        <td class="td-firstname">{{data.vlast_name}}</td>
+        <td class="td-profile">{{data.vname_profile}}</td>
+        <td class="td-range">{{data.vrange_member}}</td>
+        <td class="td-comunity">{{data.vname_comunity}}</td>
+
         
+        <td class="td-phone">{{data.vphone}}</td>
+        <td class="td-channel">{{data.vchannel_twitch}}</td>
+        <td class="td-url-channel">          
+          <a [href]="data.vurl_channel_twitch" target="_blank">{{data.vurl_channel_twitch}}</a>
+        </td>
+        <td class="td-state">{{data.vstate_record}}</td>
+        <td class="td-actions" pFrozenColumn alignFrozen="right">
+          <button pButton icon="pi pi-pencil" class="text-green-500 p-button-text"
+          (click)="viewModal(2,data)" pTooltip="Editar" tooltipPosition="bottom"></button>
+
+          <button pButton icon="pi pi-trash" class="text-red-500 p-button-text"
+          (click)="deleteComunity($event,data)" pTooltip="Eliminar" tooltipPosition="bottom"></button>
         </td>
 
       </tr>
@@ -130,16 +153,17 @@
 
 
 
-<p-dialog [(visible)]="vmEditRegisterUser" [draggable]="false" [style]="{width: '826px',height:'440px'}"  [closable]="false" [header]="titleEditRegisterUser"
+<p-dialog [(visible)]="vmEditRegisterUser" [draggable]="false" [style]="{width: '440px',height:'826px'}"  [closable]="false" [header]="titleEditRegisterUser"
   [modal]="true" class="p-fluid">
   <ng-template pTemplate="content">
     <br>
    <form [formGroup]="formRegisterEdit">
     <div class="p-fluid p-formgrid grid">
       
-      <div class="col-12 md:col-3">
+      <div class="col-12 md:col-6">
         <label class="label-filter-text">Nombres</label>
-        <input formControlName="txtFirstName" type="text" pInputText class="p-inputtext p-component p-element"     />
+        <input formControlName="txtFirstName" type="text" pInputText class="p-inputtext p-component p-element" 
+        [(ngModel)]="this.lsUserDto.vfirst_name"    />
 
           <small  *ngIf="formRegisterEdit.controls['txtFirstName'].invalid && formRegisterEdit.controls['txtFirstName'].touched"
           class="text-red-600"> Ingrese Nombres</small>
@@ -148,77 +172,87 @@
       </div>
 
       
-      <div class="col-12 md:col-3">
+      <div class="col-12 md:col-6">
         <label class="label-filter-text">Apellidos</label>
-        <input formControlName="txtLastName" type="text" pInputText class="p-inputtext p-component p-element"    />
+        <input formControlName="txtLastName" type="text" pInputText class="p-inputtext p-component p-element"  
+        [(ngModel)]="this.lsUserDto.vlast_name"  />
 
            <small  *ngIf="formRegisterEdit.controls['txtLastName'].invalid && formRegisterEdit.controls['txtLastName'].touched"
           class="text-red-600"> Ingrese Apellidos</small>
           <small *ngIf="formRegisterEdit.get('txtLastName')?.hasError('pattern')"
           class="text-red-600">Ingrese solo Letras</small>
       </div>
- 
+      
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Nro. Telefono</label>
+        <!-- <p-inputNumber formControlName="txtPhoneNumber" inputId="withoutgrouping" [useGrouping]="false" autocomplete="off"></p-inputNumber>    -->
+        <input formControlName="txtPhoneNumber" type="text" pInputText class="p-inputtext p-component p-element"   
+        [(ngModel)]="this.lsUserDto.vphone"  />
 
-      <div class="col-12 md:col-3">
+        <small  *ngIf="formRegisterEdit.controls['txtPhoneNumber'].invalid && formRegisterEdit.controls['txtPhoneNumber'].touched"
+        class="text-red-600"> Ingrese  Nro. Telefono.</small>        
+      </div>    
+
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Estado</label>                
+        <p-dropdown formControlName="intStatus" [options]="lstStatus" optionLabel="vvalue1" optionValue="id"
+        [emptyMessage]="vMessageEmpty" [placeholder]="vMessageSelect" required appendTo="body" 
+        [(ngModel)]="this.lsUserDto.istate_record" ></p-dropdown>
+
+        <small  *ngIf="formRegisterEdit.controls['intStatus'].invalid && formRegisterEdit.controls['intStatus'].touched"
+        class="text-red-600"> Seleccione Estado.</small>
+      </div>
+      
+      <div class="col-12 md:col-6">
         <label class="label-filter-text">Perfil</label>                
-        <p-dropdown formControlName="intProfile" required [placeholder]="vmessageSelect" optionLabel="value"
-         optionValue="id" [emptyMessage]="vmessageEmpty" [options]="lstProfile" appendTo="body"></p-dropdown>
+        <p-dropdown formControlName="intProfile" required [placeholder]="vMessageSelect" optionLabel="vvalue1"
+         optionValue="id" [emptyMessage]="vMessageEmpty" [options]="lstProfile" appendTo="body" [filter]="true"
+          (onChange)="onSelectProfile($event)"    [(ngModel)]="this.lsUserDto.iid_profile"></p-dropdown>
 
          <small  *ngIf="formRegisterEdit.controls['intProfile'].invalid && formRegisterEdit.controls['intProfile'].touched"
         class="text-red-600"> Seleccion Perfil.</small>
       </div>
 
+      <div class="col-12 md:col-6" >
+        <label class="label-filter-text">Rango</label>                
+        <p-dropdown formControlName="intRangeUser" required [placeholder]="vMessageSelect" optionLabel="vvalue1"
+         optionValue="id" [emptyMessage]="vMessageEmpty" [options]="lstRangeUser" appendTo="body" [filter]="true" 
+         [(ngModel)]="this.lsUserDto.iid_range_member"></p-dropdown>
 
-      <div class="col-12 md:col-3">
-        <label class="label-filter-text">Estado</label>                
-        <p-dropdown formControlName="intStatus" [options]="lstStatus" optionLabel="value" optionValue="id"
-        [emptyMessage]="vmessageEmpty" [placeholder]="vmessageSelect" required appendTo="body"></p-dropdown>
-
-        <small  *ngIf="formRegisterEdit.controls['intStatus'].invalid && formRegisterEdit.controls['intStatus'].touched"
-        class="text-red-600"> Seleccion Estado.</small>
+         <small  *ngIf="formRegisterEdit.controls['intRangeUser'].invalid && formRegisterEdit.controls['intRangeUser'].touched "
+        class="text-red-600"> Seleccion Rango.</small>
       </div>
 
+      <div class="col-12 md:col-6" >
+        <label class="label-filter-text">Comunidad</label>                
+        <p-dropdown formControlName="intComunity" required [placeholder]="vMessageSelect" optionLabel="vvalue1"
+         optionValue="id" [emptyMessage]="vMessageEmpty" [options]="lstComunityUser" appendTo="body" [filter]="true" 
+         [(ngModel)]="this.lsUserDto.iid_comunity"></p-dropdown>
 
-      <div class="col-12 md:col-3">
-        <label class="label-filter-text">Nro. Telefono</label>
-        <p-inputNumber formControlName="txtPhoneNumber" inputId="withoutgrouping" [useGrouping]="false" 
-        [maxlength]="9" autocomplete="off"></p-inputNumber>   
-
-        <small  *ngIf="formRegisterEdit.controls['txtPhoneNumber'].invalid && formRegisterEdit.controls['txtPhoneNumber'].touched"
-        class="text-red-600"> Ingrese  Nro. Telefono.</small>        
-      </div>
-      
- 
-      <div class="col-12 md:col-3">
-        <label class="label-filter-text">Tipo Documento</label>                
-        <p-dropdown formControlName="intTipeDocument"  [placeholder]="vmessageSelect" optionLabel="value" optionValue="id"
-        [emptyMessage]="vmessageEmpty" [options]="lstTipeDocument" required appendTo="body" ></p-dropdown>
-
-        <small  *ngIf="formRegisterEdit.controls['intTipeDocument'].invalid && formRegisterEdit.controls['intTipeDocument'].touched"
-        class="text-red-600"> Seleccion Tipo Documento.</small>    
-      </div>
-
-
-      <div class="col-12 md:col-3">
-        <label class="label-filter-text">Nro. Documento</label>
-        <p-inputNumber formControlName="txtDocumentNumber"  inputId="withoutgrouping" [useGrouping]="false"
-         [maxlength]="8" autocomplete="off"></p-inputNumber>  
-
-        <small  *ngIf="formRegisterEdit.controls['txtDocumentNumber'].invalid && formRegisterEdit.controls['txtDocumentNumber'].touched"
-        class="text-red-600"> Ingrese  Nro. Documento.</small>        
-      </div>
- 
-
-      <div class="col-12 md:col-3">
-        <label class="label-filter-text">Departamento</label>                
-        <p-dropdown formControlName="intDepartment"  [placeholder]="vmessageSelect" optionLabel="value" optionValue="id"
-        [emptyMessage]="vmessageEmpty" [options]="lstDepartment" required appendTo="body"></p-dropdown>
-        <small  *ngIf="formRegisterEdit.controls['intDepartment'].invalid && formRegisterEdit.controls['intDepartment'].touched"
-        class="text-red-600"> Seleccion Departamento.</small>
+         <small  *ngIf="formRegisterEdit.controls['intComunity'].invalid && formRegisterEdit.controls['intComunity'].touched "
+        class="text-red-600"> Seleccion Comunidad.</small>
       </div>
 
 
       <div class="col-12 md:col-6">
+        <label class="label-filter-text">Id Twitch</label>
+        <input formControlName="txtIdTwitch" type="text" pInputText class="p-inputtext p-component p-element"    
+        [(ngModel)]="this.lsUserDto.vchannel_twitch"/>
+        <small  *ngIf="formRegisterEdit.controls['txtIdTwitch'].invalid && formRegisterEdit.controls['txtIdTwitch'].touched "
+        class="text-red-600">Ingrese  Nombre Canal</small>
+      </div>
+
+      <div class="col-12 md:col-12">
+        <label class="label-filter-text">Link Twitch</label>
+        <input formControlName="txtLinkTwitch" type="text" pInputText class="p-inputtext p-component p-element" 
+        [(ngModel)]="this.lsUserDto.vurl_channel_twitch"   />
+        <small  *ngIf="formRegisterEdit.controls['intRangeUser'].invalid && formRegisterEdit.controls['intRangeUser'].touched "
+        class="text-red-600">Ingrese  Link del Canal</small>
+      </div>
+ 
+
+
+      <!-- <div class="col-12 md:col-6">
         <label class="label-filter-text">Correo Electronico</label>
         <input formControlName="txtEmail" type="text" pInputText class="p-inputtext p-component p-element" />
         
@@ -227,7 +261,7 @@
         <small class="text-red-600" *ngIf="formRegisterEdit.controls['txtEmail'].hasError('pattern')">
           Formato de correo electrónico inválido.
         </small>
-      </div>
+      </div> -->
 
     </div>   
    </form>
