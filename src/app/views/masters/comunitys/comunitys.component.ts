@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ConfirmationService } from 'primeng/api';
 import { Endpoints } from 'src/app/core/config/endpoints';
 import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
-import { MAX_LENGTH_FILES, PARAMS_AUXILIAR, ROWS_DEFAULT, ROWS_OPTIONS } from 'src/app/core/config/options';
+import { MAX_LENGTH_FILES, PARAMS_AUXILIAR, PATTERNS, ROWS_DEFAULT, ROWS_OPTIONS } from 'src/app/core/config/options';
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
 import { ComboModel } from 'src/app/core/util/combo';
@@ -11,15 +11,18 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ImageModule } from 'primeng/image';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { PipesModule } from 'src/app/core/pipes/pipes.module';
-
+import { InputMaskModule } from 'primeng/inputmask';
 @Component({
   selector: 'app-comunitys',
   standalone: true,
-  imports: [SharedModule, ImageModule, ProgressBarModule, PipesModule],
+  imports: [SharedModule, ImageModule, ProgressBarModule, PipesModule,InputMaskModule],
   templateUrl: './comunitys.component.html',
   styleUrl: './comunitys.component.scss'
 })
 export class ComunitysComponent implements OnInit {
+
+  hora: string = ''; // variable para almacenar la hora ingresada por el usuario
+  paqtqtern :string = PATTERNS.Time;
 
   formSearch: FormGroup;
   formRegisterEdit: FormGroup;
@@ -39,7 +42,6 @@ export class ComunitysComponent implements OnInit {
 
   lstState: ComboModel[] = [];
   paramTDState = PARAMS_AUXILIAR.STATES;
-  acceptFiles: string = ".png, .jpg";
 
   editImagen:boolean = false;
 
@@ -97,6 +99,8 @@ export class ComunitysComponent implements OnInit {
   viewModal(type: number, item: any): void {
     this.uploadedFiles = [];
     this.lsComunityDto = {};
+    this.imagenURL = null;    
+    this.formRegisterEdit.reset();
 
     switch (type) {
       case 1:

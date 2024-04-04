@@ -18,7 +18,8 @@ export const PATTERNS = {
   Letras_Numeros :'[a-zA-Z0-9 ]*',
   Numeros :'[0-9 ]*',
 
-  Email : '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+  Email : '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+  Time:'([01]?[0-9]|2[0-3]):[0-5][0-9]'
 }
 
 export const MAX_LENGTH_FILES =  45 ;

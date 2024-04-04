@@ -73,12 +73,11 @@ export class UserComunitysComponent implements OnInit {
   }
 
   getSeguridad(){
-    const url = this.router.url
-    const parts: string[] = url.split('/');
+    const parts: string[] = this.router.url.split('/');
 
-    const url2 = ['/',parts[1],'/',parts[2],'/' ,this.name].join('');
+    const url = ['/',parts[1],'/',parts[2],'/' ,this.name].join('');
 
-    const permisos =this.utilService.getSeguridad(url2);
+    const permisos =this.utilService.getSeguridad(url);
     this.req.iid_comunity = permisos.iid_comunity;
     this.loadData(this.req);
     // console.log("permisos:", permisos)

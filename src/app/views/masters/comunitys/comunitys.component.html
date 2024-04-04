@@ -1,3 +1,16 @@
+<!-- <p-inputMask mask="99:99" placeholder="HH:MM" [(ngModel)]="hora"></p-inputMask> -->
+<!-- <p-inputMask
+  mask="99:99"
+  placeholder="HH:MM"
+  [(ngModel)]="hora"
+  [pattern]="paqtqtern"
+  icon="pi pi-clock"
+ 
+></p-inputMask> -->
+
+
+
+
 <p-confirmPopup key="deleteDetalle"></p-confirmPopup>
 <p-toast key="tst" [baseZIndex]="99999"></p-toast>
 
@@ -154,7 +167,7 @@
 
 
     </div>
-    <div class="col-12 md:col-12 flex justify-content-center ">
+    <div class="col-12 md:col-12 flex justify-content-center">
       <p-image [src]="this.lsComunityDto.iid_comunity === 0 ? imagenURL : (editImagen ? imagenURL: lsComunityDto.vfirebase_url_comunity)"
        alt="Image" appendTo="body" width="235" [preview]="true"></p-image>
     </div>
