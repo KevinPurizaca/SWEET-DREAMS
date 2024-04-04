@@ -15,8 +15,8 @@ export class AppMenuComponent implements OnInit {
     constructor(public layoutService: LayoutService, private httpCoreService: HttpCoreService,) { }
 
     ngOnInit() {
-        this.loadData();
-        //this.setMenu();
+        // this.loadData();
+        this.setMenu();
     }
 
    
@@ -77,142 +77,143 @@ export class AppMenuComponent implements OnInit {
     }
     
       setMenu(){
-        this.model = [
-            // {
-            //     label: 'Home',
-            //     items: [
-            //         { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
-            //         { label: 'Portafolio', icon: 'pi pi-fw pi-home', routerLink: ['/Client/Portafolio'] }
-
-            //     ]
-            // },
+        this.model =       [
             {
-                items: [
+                "items": [
                     {
-                        label: 'Maestras',//'Masters',
-                        icon: 'pi pi-briefcase',
-                        items: [
+                        "iid_module": 1,
+                        "label": "Administración",
+                        "icon": "pi pi-credit-card",
+                        "vurl_module": "/Administration",
+                        "items": [
                             {
-                                label: 'Usuarios',//'Users',
-                                icon: 'pi pi-user',
-                                routerLink: ['/Masters/Users']
+                                "label": "Usuarios",
+                                "iid_module": 1,
+                                "icon": "pi pi-user",
+                                "routerLink": "/Administration/Users",
+                                "iid_comunity": null
                             },
                             {
-                                label: 'Perfiles',//'Profiles',
-                                icon: 'pi pi-building',
-                                routerLink: ['/Masters/Profiles']
+                                "label": "Perfiles",
+                                "iid_module": 1,
+                                "icon": "pi pi-building",
+                                "routerLink": "/Administration/Profiles",
+                                "iid_comunity": null
                             },
                             {
-                                label: 'Tablas Auxiliares',//'Axiliary-Tables',
-                                icon: 'pi pi-table',
-                                routerLink: ['/Masters/Axiliary-Tables']
+                                "label": "Tablas Auxiliares",
+                                "iid_module": 1,
+                                "icon": "pi pi-table",
+                                "routerLink": "/Administration/Axiliary-Tables",
+                                "iid_comunity": null
                             },
                             {
-                                label: 'Productos',//'Products',
-                                icon: 'pi pi-th-large',
-                                routerLink: ['/Masters/Products']
+                                "label": "Opciones Menu",
+                                "iid_module": 1,
+                                "icon": "pi pi-wrench",
+                                "routerLink": "/Administration/Options-Menu",
+                                "iid_comunity": null
+                            }
+                        ]
+                    },
+                    {
+                        "iid_module": 2,
+                        "label": "Maestras",
+                        "icon": "pi pi-briefcase",
+                        "vurl_module": "/Masters",
+                        "items": [
+                            {
+                                "label": "Comunidades",
+                                "iid_module": 2,
+                                "icon": "pi pi-flag-fill",
+                                "routerLink": "/Masters/Comunitys",
+                                "iid_comunity": null
                             },
                             {
-                                label: 'Categorias',//'Categorys',
-                                icon: 'pi pi-slack',
-                                routerLink: ['/Masters/Categorys']
+                                "label": "Rangos",
+                                "iid_module": 2,
+                                "icon": "pi pi-tags",
+                                "routerLink": "/Masters/ranges",
+                                "iid_comunity": null
+                            }
+                        ]
+                    },
+                    {
+                        "iid_module": 4,
+                        "label": "Comunidades",
+                        "icon": "pi pi-box",
+                        "vurl_module": "/Group-Comunity",
+                        "items": [
+                            {
+                                "label": "Sweet Candy",
+                                "iid_module": 4,
+                                "icon": "pi pi-building",
+                                "routerLink": "/Group-Comunity/Comunity/Sweet Candy",
+                                "iid_comunity": 1
                             },
                             {
-                                label: 'Marcas',//'Brands',
-                                icon: 'pi pi-table',
-                                routerLink: ['/Masters/Brands']
+                                "label": "Sweet Caramel",
+                                "iid_module": 4,
+                                "icon": "pi pi-building",
+                                "routerLink": "/Group-Comunity/Comunity/Sweet Caramel",
+                                "iid_comunity": 2
                             },
                             {
-                                label: 'Opciones Menu',//'Options Menu',
-                                icon: 'pi pi-wrench',
-                                routerLink: ['/Masters/Options-Menu']
+                                "label": "Sweet Chocolate",
+                                "iid_module": 4,
+                                "icon": "pi pi-building",
+                                "routerLink": "/Group-Comunity/Comunity/Sweet Chocolate",
+                                "iid_comunity": 3
+                            }
+                        ]
+                    },
+                    {
+                        "iid_module": 5,
+                        "label": "Horarios",
+                        "icon": "pi pi-calendar",
+                        "vurl_module": "/Group-Comunity",
+                        "items": [
+                            {
+                                "label": "Horario Sweet Candy",
+                                "iid_module": 5,
+                                "icon": "pi pi-calendar",
+                                "routerLink": "/Group-Comunity/Shedules/Horario Sweet Candy",
+                                "iid_comunity": 1
+                            },
+                            {
+                                "label": "Horario Sweet Caramel",
+                                "iid_module": 5,
+                                "icon": "pi pi-calendar",
+                                "routerLink": "/Group-Comunity/Shedules/Horario Sweet Caramel",
+                                "iid_comunity": 2
+                            },
+                            {
+                                "label": "Horario Sweet Chocolate",
+                                "iid_module": 5,
+                                "icon": "pi pi-calendar",
+                                "routerLink": "/Group-Comunity/Shedules/Horario Sweet Chocolate",
+                                "iid_comunity": 3
+                            }
+                        ]
+                    },
+                    {
+                        "iid_module": 3,
+                        "label": "Reportes",
+                        "icon": "pi pi-book",
+                        "vurl_module": "/Reports",
+                        "items": [
+                            {
+                                "label": "Usuarios",
+                                "iid_module": 3,
+                                "icon": "pi pi-users",
+                                "routerLink": "/Reports/users",
+                                "iid_comunity": null
                             }
                         ]
                     }
                 ]
-            },
-
-            {
-                label: 'UI Components',
-                items: [
-                    { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
-                    { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
-                    { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', routerLink: ['/uikit/floatlabel'] },
-                    { label: 'Invalid State', icon: 'pi pi-fw pi-exclamation-circle', routerLink: ['/uikit/invalidstate'] },
-                    { label: 'Button', icon: 'pi pi-fw pi-box', routerLink: ['/uikit/button'] },
-                    { label: 'Table', icon: 'pi pi-fw pi-table', routerLink: ['/uikit/table'] },
-                    { label: 'List', icon: 'pi pi-fw pi-list', routerLink: ['/uikit/list'] },
-                    { label: 'Tree', icon: 'pi pi-fw pi-share-alt', routerLink: ['/uikit/tree'] },
-                    { label: 'Panel', icon: 'pi pi-fw pi-tablet', routerLink: ['/uikit/panel'] },
-                    { label: 'Overlay', icon: 'pi pi-fw pi-clone', routerLink: ['/uikit/overlay'] },
-                    { label: 'Media', icon: 'pi pi-fw pi-image', routerLink: ['/uikit/media'] },
-                    { label: 'Menu', icon: 'pi pi-fw pi-bars', routerLink: ['/uikit/menu'], routerLinkActiveOptions: { paths: 'subset', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' } },
-                    { label: 'Message', icon: 'pi pi-fw pi-comment', routerLink: ['/uikit/message'] },
-                    { label: 'File', icon: 'pi pi-fw pi-file', routerLink: ['/uikit/file'] },
-                    { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/uikit/charts'] },
-                    { label: 'Misc', icon: 'pi pi-fw pi-circle', routerLink: ['/uikit/misc'] }
-                ]
-            },
-             {
-                label: 'Utilities',
-                items: [
-                    { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', routerLink: ['/utilities/icons'] },
-                    { label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: ['https://www.primefaces.org/primeflex/'], target: '_blank' },
-                ]
-            },
-            {
-                label: 'Pages',
-                icon: 'pi pi-fw pi-briefcase',
-                items: [
-                    {
-                        label: 'Landing',
-                        icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/landing']
-                    },
-                    {
-                        label: 'Auth',
-                        icon: 'pi pi-fw pi-user',
-                        items: [
-                            {
-                                label: 'Login',
-                                icon: 'pi pi-fw pi-sign-in',
-                                routerLink: ['/auth/login']
-                            },
-                            {
-                                label: 'Error',
-                                icon: 'pi pi-fw pi-times-circle',
-                                routerLink: ['/auth/error']
-                            },
-                            {
-                                label: 'Access Denied',
-                                icon: 'pi pi-fw pi-lock',
-                                routerLink: ['/auth/access']
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Crud',
-                        icon: 'pi pi-fw pi-pencil',
-                        routerLink: ['/pages/crud']
-                    },
-                    {
-                        label: 'Timeline',
-                        icon: 'pi pi-fw pi-calendar',
-                        routerLink: ['/pages/timeline']
-                    },
-                    {
-                        label: 'Not Found',
-                        icon: 'pi pi-fw pi-exclamation-circle',
-                        routerLink: ['/notfound']
-                    },
-                    {
-                        label: 'Empty',
-                        icon: 'pi pi-fw pi-circle-off',
-                        routerLink: ['/pages/empty']
-                    },
-                ]
-            },
-        ];
+            }
+        ]
     }
 
 }
