@@ -103,6 +103,10 @@
         <th class="td-phone">Nro. Telefonico</th>
         <th class="td-channel">Canal</th>
         <th class="td-url-channel">Link Canal</th>
+        <th class="td-zone-horaria">Zona Horaria</th>
+
+
+        
         <th class="td-state">Estado</th>
         <th class="td-actions" pFrozenColumn alignFrozen="right">Acciones</th>
       </tr> 
@@ -122,6 +126,8 @@
         <td class="td-url-channel">          
           <a [href]="data.vurl_channel_twitch" target="_blank">{{data.vurl_channel_twitch}}</a>
         </td>
+        <td class="td-zone-horaria">{{data.vtime_zone}}</td>
+
         <td class="td-state">{{data.vstate_record}}</td>
         <td class="td-actions" pFrozenColumn alignFrozen="right">
           <button pButton icon="pi pi-pencil" class="text-green-500 p-button-text"
@@ -172,7 +178,7 @@
       </div>
 
       
-      <div class="col-12 md:col-6">
+      <!-- <div class="col-12 md:col-6">
         <label class="label-filter-text">Apellidos</label>
         <input formControlName="txtLastName" type="text" pInputText class="p-inputtext p-component p-element"  
         [(ngModel)]="this.lsUserDto.vlast_name"  />
@@ -182,7 +188,7 @@
           <small *ngIf="formRegisterEdit.get('txtLastName')?.hasError('pattern')"
           class="text-red-600">Ingrese solo Letras</small>
       </div>
-      
+       -->
       <div class="col-12 md:col-6">
         <label class="label-filter-text">Nro. Telefono</label>
         <!-- <p-inputNumber formControlName="txtPhoneNumber" inputId="withoutgrouping" [useGrouping]="false" autocomplete="off"></p-inputNumber>    -->
@@ -193,15 +199,7 @@
         class="text-red-600"> Ingrese  Nro. Telefono.</small>        
       </div>    
 
-      <div class="col-12 md:col-6">
-        <label class="label-filter-text">Estado</label>                
-        <p-dropdown formControlName="intStatus" [options]="lstStatus" optionLabel="vvalue1" optionValue="id"
-        [emptyMessage]="vMessageEmpty" [placeholder]="vMessageSelect" required appendTo="body" 
-        [(ngModel)]="this.lsUserDto.istate_record" ></p-dropdown>
-
-        <small  *ngIf="formRegisterEdit.controls['intStatus'].invalid && formRegisterEdit.controls['intStatus'].touched"
-        class="text-red-600"> Seleccione Estado.</small>
-      </div>
+   
       
       <div class="col-12 md:col-6">
         <label class="label-filter-text">Perfil</label>                
@@ -225,14 +223,23 @@
 
       <div class="col-12 md:col-6" >
         <label class="label-filter-text">Comunidad</label>                
-        <p-dropdown formControlName="intComunity" required [placeholder]="vMessageSelect" optionLabel="vvalue1"
+        <p-dropdown formControlName="intComunity" [placeholder]="vMessageSelect" optionLabel="vvalue1"
          optionValue="id" [emptyMessage]="vMessageEmpty" [options]="lstComunityUser" appendTo="body" [filter]="true" 
          [(ngModel)]="this.lsUserDto.iid_comunity"></p-dropdown>
 
-         <small  *ngIf="formRegisterEdit.controls['intComunity'].invalid && formRegisterEdit.controls['intComunity'].touched "
-        class="text-red-600"> Seleccion Comunidad.</small>
+         <!-- <small  *ngIf="formRegisterEdit.controls['intComunity'].invalid && formRegisterEdit.controls['intComunity'].touched "
+        class="text-red-600"> Seleccion Comunidad.</small> -->
       </div>
 
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Estado</label>                
+        <p-dropdown formControlName="intStatus" [options]="lstStatus" optionLabel="vvalue1" optionValue="id"
+        [emptyMessage]="vMessageEmpty" [placeholder]="vMessageSelect" required appendTo="body" 
+        [(ngModel)]="this.lsUserDto.istate_record" ></p-dropdown>
+
+        <small  *ngIf="formRegisterEdit.controls['intStatus'].invalid && formRegisterEdit.controls['intStatus'].touched"
+        class="text-red-600"> Seleccione Estado.</small>
+      </div>
 
       <div class="col-12 md:col-6">
         <label class="label-filter-text">Id Twitch</label>
@@ -242,6 +249,16 @@
         class="text-red-600">Ingrese  Nombre Canal</small>
       </div>
 
+    <div class="col-12 md:col-6">
+        <label class="label-filter-text">Zona Horaria</label>                
+        <p-dropdown formControlName="intTimeZone" [options]="lstZonaHoraria" optionLabel="vvalue1" optionValue="id"
+        [emptyMessage]="vMessageEmpty" [placeholder]="vMessageSelect" required appendTo="body" 
+        [(ngModel)]="this.lsUserDto.iid_time_zone" ></p-dropdown>
+
+        <small  *ngIf="formRegisterEdit.controls['intTimeZone'].invalid && formRegisterEdit.controls['intTimeZone'].touched"
+        class="text-red-600"> Seleccione Zona Horaria.</small>
+      </div>
+      
       <div class="col-12 md:col-12">
         <label class="label-filter-text">Link Twitch</label>
         <input formControlName="txtLinkTwitch" type="text" pInputText class="p-inputtext p-component p-element" 

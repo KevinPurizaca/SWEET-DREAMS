@@ -90,8 +90,21 @@ export class UtilService {
          }       
          return opciones; 
      }
-    
+    }
+     getOptionGroupComunity(router:any) {
+        const menu = this.getItemStorage('menu');
 
+        if (menu) {
+            const parts = router.split('/');
+            const url_module_complete = `/${parts[0]}/${parts[1]}`;
+            const urlComplete = `/${router}`;
+        
+            const opciones = menu[0]?.items.find((x: any) => x.vurl_module_complete === url_module_complete)?.items
+                                           .find((x: any) => x.routerLink === urlComplete);
+       
+            return opciones; 
+        }
+        
     }
 
     getItemStorage(item:any):any{

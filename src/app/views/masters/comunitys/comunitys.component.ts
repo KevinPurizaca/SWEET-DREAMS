@@ -11,19 +11,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ImageModule } from 'primeng/image';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { PipesModule } from 'src/app/core/pipes/pipes.module';
-import { InputMaskModule } from 'primeng/inputmask';
 @Component({
   selector: 'app-comunitys',
   standalone: true,
-  imports: [SharedModule, ImageModule, ProgressBarModule, PipesModule,InputMaskModule],
+  imports: [SharedModule, ImageModule, ProgressBarModule, PipesModule],
   templateUrl: './comunitys.component.html',
   styleUrl: './comunitys.component.scss'
 })
 export class ComunitysComponent implements OnInit {
-
-  hora: string = ''; // variable para almacenar la hora ingresada por el usuario
-  paqtqtern :string = PATTERNS.Time;
-
   formSearch: FormGroup;
   formRegisterEdit: FormGroup;
 
@@ -201,7 +196,7 @@ export class ComunitysComponent implements OnInit {
       acceptLabel: 'Sí',
       accept: () => {
 
-        this.httpCoreService.delete(Endpoints.DeleteComunity + item.iid_comunity).subscribe(res => {
+        this.httpCoreService.delete(Endpoints.DeleteComunity + item.iid_range).subscribe(res => {
           if (res.isSuccess) {
             this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ELIMINADA);
             this.loadData(this.req);

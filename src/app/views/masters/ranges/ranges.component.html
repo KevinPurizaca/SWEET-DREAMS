@@ -1,0 +1,191 @@
+<p-toast key="tst" [baseZIndex]="99999"></p-toast>
+<p-confirmPopup key="deleteDetalle"></p-confirmPopup>
+
+
+<p-panel header="Busqueda de Rangos">
+
+    <form [formGroup]="formSearch">
+        <div class="grid p-formgrid p-fluid">
+            <div class="col-12 md:col-3">
+                <label class="label-filter-text">Nombre</label>
+                <input formControlName="txtName" type="text" pInputText class="p-inputtext p-component p-element" />
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="label-filter-text">Descripcion</label>
+                <input formControlName="txtDescription" type="text" pInputText class="p-inputtext p-component p-element" />
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="label-filter-text">Estado</label>                
+                <p-dropdown formControlName="intState"  [placeholder]="vMessageSelect" 
+                optionLabel="vvalue1" optionValue="id" appendTo="body"
+                [emptyMessage]="vMessageEmpty" [options]="lstState" ></p-dropdown>
+              </div>
+        </div>
+
+        <div class="flex flex-wrap sm:flex-row">
+            <div class="sm:mr-auto mb-3 mr-3">
+              <button pButton label="Agregar Rango" type="button" icon="pi pi-plus" class="p-button-help" (click)="viewModal(1,null)"></button>
+            </div>
+            <div class="mb-3 mr-3">
+              <button pButton label="Buscar" icon="pi pi-search" type="submit" class="p-button-outlined p-button-primary"></button>
+            </div>
+            <div class="">
+              <button pButton (click)="formSearch.reset()" label="Limpiar" type="button" icon="pi pi-trash" class="p-button-outlined p-button-secondary"></button>
+            </div>
+          </div>
+    </form>
+
+</p-panel>
+
+<br>
+
+<p-panel header="Resultado de Rangos">
+  <p-table [value]="lstRange" scrollDirection="both" [scrollable]="true" scrollHeight="400px" 
+  styleClass="mt-3" responsiveLayout="scroll"  styleClass="p-datatable-gridlines">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="td-code" >Id</th>
+        <th class="td-name" >Nombre</th>
+        <th class="td-description" >Descripción</th>
+        <th class="td-hours-normal" >Horas Normales</th>
+        <th class="td-hours-vip " >Horas VIP</th>
+        <th class="td-time-agenda" >Hora Reserva</th>
+        <th class="td-support-required" >% Min Necesario</th>
+        <th class="td-state" >Estado</th>
+        <th class="td-actions" pFrozenColumn alignFrozen="right">Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data>
+      <tr>
+        <td class="td-code  font-bold" >{{data.vcode_range}}</td>
+        <td class="td-name  " >{{data.vname_range}}</td>
+        <td class="td-description  " >{{data.vdescription_range}}</td>   
+        <td class="td-hours-normal  " >{{data.ihours_normal_range}}</td>  
+        <td class="td-hours-vip  " >{{data.ihours_vip_range}}</td>  
+        <td class="td-time-agenda  " >{{data.vtime_agenda_range}}</td>  
+        <td class="td-support-required  " >{{data.dsupport_min_required | currencyFormat}}</td>       
+        <td class="td-state  " >{{data.vstate_record}}</td>
+        <td class="td-actions  " pFrozenColumn alignFrozen="right">         
+         
+          <button pButton icon="pi pi-pencil" class="text-green-500 p-button-text"
+          (click)="viewModal(2,data)" pTooltip="Editar" tooltipPosition="bottom"></button>
+
+           <button pButton icon="pi pi-trash" class="text-red-500 p-button-text"
+           (click)="deleteRange($event,data)" pTooltip="Eliminar" tooltipPosition="bottom"></button>
+ 
+        </td>
+
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7">No se encontró Información.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="7">
+          Cargando información. Espere por favor.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-paginator [rows]="req.ilimit" [totalRecords]="totalRecord" [rowsPerPageOptions]="rowsOptions"
+  [showCurrentPageReport]="true" [first]="first"  (onPageChange)="changePage($event)"
+  currentPageReportTemplate="Total : {totalRecords} registros"></p-paginator>
+
+</p-panel>
+
+
+
+
+
+
+
+<p-dialog [(visible)]="vmEditRegisterRange" [draggable]="false" [style]="{width: '450px',height:'450px'}"  [closable]="false" 
+          [header]="titleEditRegisterRange" [modal]="true" >
+  <ng-template pTemplate="content">
+    <br>
+   <form [formGroup]="formRegisterEdit">
+    <div class="grid p-formgrid p-fluid ">
+      
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Nombre</label>
+        <input formControlName="txtName" type="text" pInputText class="p-inputtext p-component p-element" 
+          [(ngModel)]="lsRangeDto.vname_range"    />
+
+          <small  *ngIf="formRegisterEdit.controls['txtName'].invalid && formRegisterEdit.controls['txtName'].touched"
+          class="text-red-600"> Ingrese Nombre</small>
+          <small *ngIf="formRegisterEdit.get('txtName')?.hasError('pattern')"
+          class="text-red-600">Ingrese solo Letras</small>
+      </div>
+
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Descripcion</label>
+        <input formControlName="txtDescription" type="text" pInputText class="p-inputtext p-component p-element"   
+        [(ngModel)]="lsRangeDto.vdescription_range"   />
+
+          <small  *ngIf="formRegisterEdit.controls['txtDescription'].invalid && formRegisterEdit.controls['txtDescription'].touched"
+          class="text-red-600"> Ingrese Descripcion</small>
+          <small *ngIf="formRegisterEdit.get('txtDescription')?.hasError('pattern')"
+          class="text-red-600">Ingrese solo Letras</small>
+      </div>
+
+
+
+
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Horas Normal</label>
+        <p-inputNumber formControlName="intHoursNormal" inputId="withoutgrouping" [useGrouping]="false" 
+        [maxlength]="9" autocomplete="off" [(ngModel)]="lsRangeDto.ihours_normal_range"></p-inputNumber>  
+      </div>
+
+      <div class="col-12 md:col-6">
+        <label class="label-filter-text">Horas VIP</label>
+        <p-inputNumber formControlName="intHoursVip" inputId="withoutgrouping" [useGrouping]="false" 
+        [maxlength]="9" autocomplete="off" [(ngModel)]="lsRangeDto.ihours_vip_range"></p-inputNumber> 
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label class="label-filter-text">Hora Agenda</label>
+        <!-- <input formControlName="txtTimeAgenda" type="text" pInputText class="p-inputtext p-component p-element"   
+        [(ngModel)]="lsRangeDto.vtime_agenda_range"   /> -->
+
+        <!-- <p-inputMask mask="99:99" placeholder="HH:MM" [(ngModel)]="hora"></p-inputMask> -->
+        <p-inputMask
+          mask="99:99"
+          placeholder="HH:MM"
+          formControlName="txtTimeAgenda" 
+          [pattern]="patternTime"
+          icon="pi pi-clock"
+          [(ngModel)]="lsRangeDto.vtime_agenda_range"
+        ></p-inputMask>
+
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label class="label-filter-text">% Min. Rango</label>
+        <p-inputNumber formControlName="intMinRange" [(ngModel)]="lsRangeDto.dsupport_min_required"
+          inputId="locale-user" [minFractionDigits]="2" [maxFractionDigits]="2" autocomplete="off" [maxlength]="8"></p-inputNumber>
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label class="label-filter-text">Estado</label>                
+        <p-dropdown formControlName="intState" [options]="lstState"  optionLabel="vvalue1" optionValue="id" appendTo="body"
+        [emptyMessage]="vMessageEmpty" [placeholder]="vMessageSelect"  [(ngModel)]="lsRangeDto.istate_record" ></p-dropdown>
+
+        <small  *ngIf="formRegisterEdit.controls['intState'].invalid && formRegisterEdit.controls['intState'].touched"
+        class="text-red-600"> Seleccion Estado.</small>
+      </div>
+
+    </div>   
+   </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cerrar" icon="pi pi-times" class="p-button-text" (click)="hideModal()"></button>
+    <button pButton pRipple label="Guardar" icon="pi pi-save" class="p-button-text" [loading]="loadingSave" (click)="saveRange()" ></button>
+  </ng-template>
+</p-dialog>

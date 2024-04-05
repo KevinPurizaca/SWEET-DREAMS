@@ -7,7 +7,9 @@ const routes: Routes = [
   {path: 'Products',loadChildren:  () => import('./products/products.module').then(m => m.ProductsModule)},
   {path: 'Brands',loadChildren:    () => import('./brands/brands.module').then(m => m.BrandsModule)},
   {path: 'Comunitys',loadChildren: () => import('./comunitys/comunitys.module').then(m => m.ComunitysModule)},
+  {path: 'Ranges',loadChildren: () => import('./ranges/ranges.module').then(m => m.RangesModule)},
 
+  
 ]
 
 @NgModule({

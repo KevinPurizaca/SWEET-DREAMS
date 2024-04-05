@@ -33,14 +33,20 @@ export const Endpoints = {
   RegisterProfileAccess :'/Administration/Profiles/RegisterProfileAccess',  
   DeleteProfileAccess   :'/Administration/Profiles/DeleteProfileAccess?iid_profile_access=',
 
-  GetListComunity :'/Masters/Comunity/GetListComunity',  
-  RegisterComunity :'/Masters/Comunity/RegisterComunity',  
-  DeleteComunity :'/Masters/Comunity/DeleteComunity?iid_comunity=',
-
-
   GetListUsers :'/Administration/Users/GetListUsers',
   RegisterUser:'/Administration/Users/RegisterUser',
   DeleteUser  :'/Administration/Users/DeleteUser?iid_user=',
 
-  
+  GetListRange :'/Masters/Range/GetListRange',
+  RegisterRange:'/Masters/Range/RegisterRange',
+  DeleteRange  :'/Masters/Range/DeleteRange?iid_range=',
+
+  GetListShedule :'/Masters/Shedule/GetListShedule',
+  RegisterShedule:'/Masters/Shedule/RegisterShedule',
+  DeleteShedule  :'/Masters/Shedule/DeleteShedule?iid_shedule_weekly=',
+
+/*  MASTERS */
+  GetListComunity :'/Masters/Comunity/GetListComunity',  
+  RegisterComunity :'/Masters/Comunity/RegisterComunity',  
+  DeleteComunity :'/Masters/Comunity/DeleteComunity?iid_comunity=',
 }

@@ -7,10 +7,13 @@ export const TIME_RETURN_TRAY = 3000;
 export enum PARAMS_AUXILIAR {
     STATES = '1',
     TIPO_DOCUMENTO ='2',
-    DEPARTAMENTOS_PERU ='3',
+    MESES_ANIO ='3',
     MONEDA ='4',
     DIA_SEMANA ='5',
-    RANGE_USER = '6'
+    TYPE_STREAM = '6',
+    ZONAS_HORARIOS = '7',
+    DIA_AGENDA = '8'
+
 }
 
 export const PATTERNS = {

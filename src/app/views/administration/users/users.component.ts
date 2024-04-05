@@ -30,11 +30,12 @@ export class UsersComponent implements OnInit {
   lstRangeUser: ComboModel[] = [];
   lstComunityUser: ComboModel[] = [];
 
-  lstDepartment: ComboModel[] = [];
+  lstZonaHoraria: ComboModel[] = [];
   lstTipeDocument: ComboModel[] = [];
 
   paramTDState = PARAMS_AUXILIAR.STATES;
-  paramTDRangeUser = PARAMS_AUXILIAR.RANGE_USER;
+  paramTDRangeUser = PARAMS_AUXILIAR.TYPE_STREAM;
+  paramTDZoneHoraria = PARAMS_AUXILIAR.ZONAS_HORARIOS;
 
 
   lstUsers: any[] = [];
@@ -46,6 +47,7 @@ export class UsersComponent implements OnInit {
 
   vmEditRegisterUser: boolean = false;
   submitted: boolean = false;
+  isUserMember: boolean = false;
 
   totalRecord: number = 0;
   first: number = 0;
@@ -95,7 +97,8 @@ export class UsersComponent implements OnInit {
       intProfile: [-1],
       intRangeUser: [-1],
       intStatus: [-1],
-      intComunity: [-1, [Validators.required]],
+      intComunity: [-1],
+      intTimeZone: [-1],
 
       txtPhoneNumber: [null, [Validators.required]],
       // txtEmail:['',[Validators.pattern(PATTERNS.Email), Validators.required]],
@@ -106,15 +109,17 @@ export class UsersComponent implements OnInit {
       txtLinkTwitch: ['', [Validators.required]],
 
 
-    });
+    });     
 
   }
 
   ngOnInit(): void {
     this.loadDataProfile();
     this.loadDataStatus();
+    this.loadDataZonaHoraria();
     this.loadDataRangeUser();
     this.loadDataComunityUser();
+
     this.loadData(this.req);
   }
 
@@ -158,6 +163,7 @@ export class UsersComponent implements OnInit {
         vchannel_twitch: value.txtIdTwitch,
         iid_comunity: value.intComunity,
         istate_record: value.intStatus,
+        iid_time_zone:value.intTimeZone
       }
 
       this.httpCoreService.post(req, Endpoints.RegisterUser).subscribe(res => {
@@ -186,10 +192,10 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  isUserMember: boolean = false;
   onSelectProfile(event): void {
     this.isUserMember = this.lstProfile.find((x: any) => x.id == event.value).bvalue1;
   }
+
 
   loadDataProfile() {
     let req = {
@@ -224,15 +230,36 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  loadDataRangeUser() {
-    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDRangeUser).subscribe(res => {
+  loadDataZonaHoraria() {
+    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDZoneHoraria).subscribe(res => {
       if (res.isSuccess) {
-        this.lstRangeUser = res.data;
+        this.lstZonaHoraria = res.data;
       }
     });
   }
+  
+  loadDataRangeUser() {
+    let req = {
+      iid_Range: -1,
+      vname_Range: '',
+      vdescription_Range: '',
+  
+      istate_record: -1,
+      iindex: 0,
+      ilimit: 10000
+    }
 
-
+    this.httpCoreService.post(req,Endpoints.GetListRange).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstRangeUser = res.data.map((x: any) => {
+          return {
+            id: x.iid_range,
+            vvalue1: x.vname_range
+          }
+        });;
+      }
+    });
+  }
 
   loadDataComunityUser() {
     let req = {
@@ -251,10 +278,11 @@ export class UsersComponent implements OnInit {
             id: x.iid_comunity,
             vvalue1: x.vname_comunity
           }
-        });;
+        });
       }
     });
   }
+
   // timeZones: TimeZone[] = [
   //   { name: 'Hora Colombia', startHour: 10, endHour: 23 },
   //   { name: 'Hora España', startHour: 17, endHour: 6 },

@@ -15,27 +15,29 @@ export class AppMenuComponent implements OnInit {
     constructor(public layoutService: LayoutService, private httpCoreService: HttpCoreService,) { }
 
     ngOnInit() {
-        // this.loadData();
-        this.setMenu();
+        this.loadData();
+        //this.setMenu();
     }
 
    
 
     loadData(){
         //crear meqtodo para qtraer los accesos por perfil
-    // this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + 1).subscribe(res =>{
-    //     if(res.isSuccess){
-    //         let primernivel:any[] = this.organizarDatosPorModulo(res.data.filter((x:any)=> x.baccess_view === true));
-    //         this.model.push({
-    //             items:[
-    //                 ...primernivel
-    //             ]
-    //         })
-    //         localStorage.setItem('menu', JSON.stringify(this.model));
-    //     }
-    // })
+    this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + 1).subscribe(res =>{
+        if(res.isSuccess){
+            let primernivel:any[] = this.organizarDatosPorModulo(res.data.filter((x:any)=> x.baccess_view === true));
+            this.model.push({
+                items:[
+                    ...primernivel
+                ]
+            })
+            localStorage.removeItem('menu');
 
-      this.model = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : [];  
+            localStorage.setItem('menu', JSON.stringify(this.model));
+        }
+    })
+
+      //this.model = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : [];  
 }
 
   
@@ -56,6 +58,8 @@ export class AppMenuComponent implements OnInit {
                     label: objeto.vname_module,
                     icon: 'pi pi-'+objeto.vicon_module,
                     vurl_module: objeto.vurl_module,
+                    vurl_module_complete: objeto.vurl_module + "/" +objeto.vurl_option.split('/')[1] ,
+
                     items: []   
                 });
             }
@@ -133,7 +137,7 @@ export class AppMenuComponent implements OnInit {
                                 "label": "Rangos",
                                 "iid_module": 2,
                                 "icon": "pi pi-tags",
-                                "routerLink": "/Masters/ranges",
+                                "routerLink": "/Masters/Ranges",
                                 "iid_comunity": null
                             }
                         ]

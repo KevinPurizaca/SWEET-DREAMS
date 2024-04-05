@@ -1,12 +1,3 @@
-<!-- <p-inputMask mask="99:99" placeholder="HH:MM" [(ngModel)]="hora"></p-inputMask> -->
-<!-- <p-inputMask
-  mask="99:99"
-  placeholder="HH:MM"
-  [(ngModel)]="hora"
-  [pattern]="paqtqtern"
-  icon="pi pi-clock"
- 
-></p-inputMask> -->
 
 
 
@@ -145,7 +136,7 @@
         [(ngModel)]="lsComunityDto.vdescription_comunity"   />
 
           <small  *ngIf="formRegisterEdit.controls['txtDescription'].invalid && formRegisterEdit.controls['txtDescription'].touched"
-          class="text-red-600"> Ingrese Nombre</small>
+          class="text-red-600"> Ingrese Descripcion</small>
           <small *ngIf="formRegisterEdit.get('txtDescription')?.hasError('pattern')"
           class="text-red-600">Ingrese solo Letras</small>
       </div>

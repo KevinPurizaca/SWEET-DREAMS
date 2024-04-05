@@ -96,7 +96,7 @@ export class ProfilesComponent implements OnInit {
         this.lsProfilesDto = item;
         this.lsProfilesDto.buser_member = item.buser_member || false;
 
-        this.titleEditRegisterProfile = "Editar Tabla Cabecera";
+        this.titleEditRegisterProfile = "Editar Perfil";
         this.vmEditRegisterProfile = true;
         break;
     }
