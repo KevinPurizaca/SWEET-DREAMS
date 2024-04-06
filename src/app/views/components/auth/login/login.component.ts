@@ -67,7 +67,6 @@ export class LoginComponent {
             } else {
               //const iid_perfil = this.utilService.getItemStorage('userdata').iid_perfil; //JSON.parse(localStorage.getItem('userdata') || '{}').iid_perfil;
     
-              const iid_perfil =  this.utilService.getItemStorage('userdata').iid_perfil;
               const ruta = '/inicio/home';
               this.router.navigate([ruta]);      
             }

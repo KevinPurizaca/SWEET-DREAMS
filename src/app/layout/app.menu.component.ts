@@ -1,8 +1,7 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
-import { HttpCoreService } from '../core/services/httpCore.service';
-import { Endpoints } from '../core/config/endpoints';
+import { UtilService } from '../core/util/util.services';
 
 @Component({
     selector: 'app-menu',
@@ -12,7 +11,8 @@ export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService, private httpCoreService: HttpCoreService,) { }
+    constructor(public layoutService: LayoutService,     private utilService: UtilService,
+    ) { }
 
     ngOnInit() {
         this.loadData();
@@ -23,7 +23,7 @@ export class AppMenuComponent implements OnInit {
 
     loadData(){
         //crear meqtodo para qtraer los accesos por perfil
-      this.model = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : [];  
+      this.model = this.utilService.getItemStorage('menu'); 
     }
 
   

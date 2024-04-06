@@ -211,31 +211,31 @@ export class HttpCoreService {
       case 0:
         message_error = `Error, la conexión con el servidor no es posible: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
         console.error(message_error);
-        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        // this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         throw message_error;
       case 400:
         message_error = `Error, Servicio con Problemas: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        // this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         console.error(message_error);
         throw message_error;
       case 401:
         message_error = `Error, Falta de Autorización: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        // this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         console.error(message_error);
         this.router.navigate(['/login']);
         throw message_error;
       case 403:
         message_error = `Error, Falta de permisos para el servicio: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        // this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         console.error(message_error);
         throw message_error;
       case 404:
         message_error = `Error, Recurso no encontrado. Verifica la URL e intenta nuevamente.: ${err.message} ${(err.error != null ? err.error.innerException : '')}`;
-        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
+        // this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: message_error });
         console.error(message_error);
         throw message_error;
       default:
-        this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: err.error });
+        // this.messageService.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: err.error });
         throw `Error en la fuente. Detalles: ${err.error}`;
     }
   }

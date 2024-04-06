@@ -1,18 +1,5 @@
-<!-- <div>
-  <h3>Selecciona la zona horaria:</h3>
-  <select (change)="updateTimeZoneHours($event.target.value)">
-    <option *ngFor="let timeZone of timeZones" [value]="timeZone.name">{{ timeZone.name }}</option>
-  </select>
-</div>
-
-<div *ngFor="let timeZone of selectedTimeZones">
-  <h4>{{ timeZone.name }}</h4>
-  <ul>
-    <li *ngFor="let hour of generateHoursRange(timeZone.startHour, timeZone.endHour)">{{ hour }}</li>
-  </ul>
-</div>
- -->
-
+<p-toast key="tst" [baseZIndex]="99999"></p-toast>
+<p-confirmPopup key="deleteDetalle"></p-confirmPopup>
 
 <p-panel header="Búsqueda de Usuarios" [toggleable]="true" class="line-height-3">
    

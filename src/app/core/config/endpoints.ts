@@ -45,12 +45,17 @@ export const Endpoints = {
   RegisterShedule:'/Masters/Shedule/RegisterShedule',
   DeleteShedule  :'/Masters/Shedule/DeleteShedule?iid_shedule_weekly=',
 
+  
 /*  MASTERS */
   GetListComunity :'/Masters/Comunity/GetListComunity',  
   RegisterComunity :'/Masters/Comunity/RegisterComunity',  
   DeleteComunity :'/Masters/Comunity/DeleteComunity?iid_comunity=',
-  GetListSheduleByWeek :'/Masters/Shedule/GetListSheduleByWeek?iid_week_shedule_weekly=',  
+  GetListSheduleByWeek :'/Masters/Shedule/GetListSheduleByWeek',//?iid_week_shedule_weekly=',  
+
+  GetListDayAvailableByWeek :'/Masters/Shedule/GetListDayAvailableByWeek',
+  GetListHourAvailableByDay :'/Masters/Shedule/GetListHourAvailableByDay',  
 
 
+  
   
 }

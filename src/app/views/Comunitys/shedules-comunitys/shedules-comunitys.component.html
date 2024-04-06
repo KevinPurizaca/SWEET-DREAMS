@@ -1,24 +1,16 @@
+<p-toast key="tst" [baseZIndex]="99999"></p-toast>
+<p-confirmPopup key="deleteDetalle"></p-confirmPopup>
+
 <p-panel [header]="'AGENDA SEMANAL  ' + this.lsComunity.vname_comunity ">
 
-
-    <h1>USUARIO:</h1>
-    <span>{{description_user}}</span>
-
-    <br>
-    <br>
-    <h1>HORA ACTUAL:</h1>
-
-    <p>{{ horaActual }}</p>
-
-    <br>
-    <br>
+    <h1>HORA ACTUAL: {{ horaActual }}</h1>
 
     <div class="" *ngIf="vactive_agenda" >
         <form [formGroup]="formAgenda">
             <div class="p-fluid p-formgrid grid">
               <div class="col-12 md:col-3">
                 <label class="label-filter-text">Dia De la Semana</label>                
-                <p-dropdown formControlName="intDay"  [placeholder]="vMessageSelect" 
+                <p-dropdown formControlName="intDay"  [placeholder]="vMessageSelect"  (onChange)="loadDataHourStream()"
                 optionLabel="vvalue1" optionValue="id" appendTo="body" [filter]="true" 
                 [emptyMessage]="vMessageEmpty" [options]="lstDiaAgenda" ></p-dropdown>
               </div>
@@ -26,8 +18,8 @@
               <div class="col-12 md:col-3">
                 <label class="label-filter-text">Hora de Stream</label>                
                 <p-dropdown formControlName="intHour"  [placeholder]="vMessageSelect" 
-                optionLabel="vvalue1" optionValue="vvalue2" appendTo="body"  
-                [emptyMessage]="vMessageEmpty" [options]="lstHourStream" ></p-dropdown>
+                optionLabel="vvalue1" optionValue="vvalue3" appendTo="body" 
+                emptyMessage="Seleccione Dia de la Semana" [options]="lstHourStream" ></p-dropdown>
               </div>
 
               <div class="col-12 md:col-3">
@@ -39,7 +31,7 @@
               
             </div> 
 
-            <div class="flex flex-wrap sm:flex-row">
+            <div class="flex flex-wrap sm:flex-row" *ngIf="sheduleAvailable">
               <div class="sm:mr-auto mb-3 mr-3">
                 <button pButton label="Agregar Horario" type="button" icon="pi pi-plus" class="p-button-help" (click)="saveShedule()" ></button>
               </div>
@@ -58,56 +50,60 @@
   
     <ng-template pTemplate="header">
       <tr>
-        <th class="td-code" pFrozenColumn>Zona Horaria</th>
-        <th class="td-name" >Lunes</th>
-        <th class="td-name" >Martes</th>
-        <th class="td-name" >Miercoles</th>
-        <th class="td-name" >Jueves</th>
-        <th class="td-name" >Viernes</th>
-        <th class="td-name" >Sabado</th>
+        <th class="td-zone-time" pFrozenColumn>Hora {{this.lsUser.vtime_zone_user}}</th>
+        <th class="td-day-week" >Lunes</th>
+        <th class="td-day-week" >Martes</th>
+        <th class="td-day-week" >Miercoles</th>
+        <th class="td-day-week" >Jueves</th>
+        <th class="td-day-week" >Viernes</th>
+        <th class="td-day-week" >Sabado</th>
      </tr>
     </ng-template>
     <ng-template pTemplate="body" let-data>
       <tr>
-        <td class="td-code  font-bold"  pFrozenColumn>{{data.vzone_time_user}}</td>
-        <td class="td-name  " >
+        <td class="td-zone-time"  pFrozenColumn>
+          <span class="flex justify-content-center font-bold text-3xl">{{data.vzone_time_user}}</span>          
+        </td>
+        <td class="td-day-week" >
           <div *ngFor="let item of data.vday_monday">
-              <span>{{item.vname_channel}}</span>
-              <br>
+            <span [ngClass]="item.itype_stream == 2 ? 'td-stream-vip' : ''">{{item.vname_channel}}</span>
+            <br>
           </div>
         </td>
 
-        <td class="td-name  " >
+        <td class="td-day-week" >
           <div *ngFor="let item of data.vday_tuesday">
-              <span>{{item.vname_channel}}</span>
-              <br>
+            <span [ngClass]="item.itype_stream == 2 ? 'td-stream-vip' : ''">{{item.vname_channel}}</span>
+            <br>
           </div>
         </td>
 
-        <td class="td-name  " >
+        <td class="td-day-week" >
           <div *ngFor="let item of data.vday_wednesday">
-              <span>{{item.vname_channel}}</span>
-              <br>
+            <span [ngClass]="item.itype_stream == 2 ? 'td-stream-vip' : ''">{{item.vname_channel}}</span>
+            <br>
           </div>
         </td>
 
-        <td class="td-name  " >
+        <td class="td-day-week" >
           <div *ngFor="let item of data.vday_thursday">
-              <span>{{item.vname_channel}}</span>
-              <br>
+            <span [ngClass]="item.itype_stream == 2 ? 'td-stream-vip' : ''">{{item.vname_channel}}</span>
+            <br>
           </div>
         </td>
 
-        <td class="td-name  " >
+        <td class="td-day-week" >
           <div *ngFor="let item of data.vday_friday">
-              <span>{{item.vname_channel}}</span>
-              <br>
+            <span [ngClass]="item.itype_stream == 2 ? 'td-stream-vip' : ''">{{item.vname_channel}}</span>
+            <br>
           </div>
         </td>
 
-        <td class="td-name  " >
+        <td class="td-day-week" >
           <div *ngFor="let item of data.vday_saturday">
-              <span>{{item.vname_channel}}</span>
+              <span [ngClass]="item.itype_stream == 2 ? 'td-stream-vip' : ''">{{item.vname_channel}}</span>
+              <!-- 1 stream vip ,2 stream normal
+ -->
               <br>
           </div>
         </td>

@@ -5,7 +5,7 @@ import { S } from '@fullcalendar/core/internal-common';
 import { ConfirmationService } from 'primeng/api';
 import { interval, map } from 'rxjs';
 import { Endpoints } from 'src/app/core/config/endpoints';
-import { MESSAGE_EMPTY, MESSAGE_SELECT } from 'src/app/core/config/mensajes';
+import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
 import { PARAMS_AUXILIAR } from 'src/app/core/config/options';
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
@@ -23,11 +23,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export class ShedulesComunitysComponent implements OnInit {
   nameComunity: string = '';
-  lsComunity:any = {};
 
-  iidUser:number = 1;
+  lsComunity:any = {};
   lsUser:any = {};
-  lsRange:any = {};
 
   lstShedule:any []= [];
 
@@ -41,25 +39,23 @@ export class ShedulesComunitysComponent implements OnInit {
   vMessageSelect: string = MESSAGE_SELECT;
 
   lstDiaAgenda: ComboModel[] = [];
-  paramTDiaAgenda = PARAMS_AUXILIAR.DIA_AGENDA;
-
-  description_user = "";
-  descriptionSemana:string = "";
-  numberSemana:number = 0;
-
-  lstTypeSream : ComboModel[] = [];
-  paramTDTypeSream : string = PARAMS_AUXILIAR.TYPE_STREAM;
-
   lstHourStream : ComboModel[] = [];
-  paramTDHourSream : string = PARAMS_AUXILIAR.ZONAS_HORARIOS;
-
+  lstTypeSream : ComboModel[] = [];
   lstMonth : ComboModel[] = [];
+
+
+  paramTDTypeSream : string = PARAMS_AUXILIAR.TYPE_STREAM;
   paramTDMonth : string = PARAMS_AUXILIAR.MESES_ANIO;
 
 
+
+  descriptionSemana:string = "";
+  numberSemana:number = 0;
+
   horaActual: string;
   vactive_agenda : boolean = false;
-
+  sheduleAvailable: boolean = false;
+  
   constructor(
     private route: ActivatedRoute,    
     private router: Router,
@@ -86,17 +82,18 @@ export class ShedulesComunitysComponent implements OnInit {
       this.nameComunity = params['name'];
 
       this.loadDataComunity();
-      this.loadDataUser();
-      // this.loadDataTypeStream();
+      this.lsUser = this.utilService.getItemStorage('userdata'); 
+  
+
       this.loadDataMonth();
+      this.loadDataTypeStream();
+
 
       this.fechaActual = new Date();
       this.currentWeek = this.getWeekNumber(this.fechaActual, 0); // Aumenta 7 días
       let hora_dia = this.obtenerDiaYHora(0);
-      console.log("hora_dia:", hora_dia)
 
-      this.loadDataDiaAgenda();
-      this.loadDataShedule();
+      // this.loadDataDiaAgenda();
 
       interval(1000).pipe(
         map(() => {
@@ -113,10 +110,14 @@ export class ShedulesComunitysComponent implements OnInit {
 
 
   loadDataShedule(){
-    this.httpCoreService.get(Endpoints.GetListSheduleByWeek+this.currentWeek).subscribe(res => {
+    let req ={
+      iid_week_shedule_weekly : this.currentWeek,
+      iid_comunity : this.lsComunity.iid_comunity
+    }
+    this.httpCoreService.post(req,Endpoints.GetListSheduleByWeek).subscribe(res => {
       if (res.isSuccess) {
-        this.lstShedule = res.data;        
-        console.log("this.lsSheduleUser:", this.lstShedule)
+        this.lstShedule = res.data;    
+        this.sheduleAvailable = res.sheduleAvailable;    
       }  
     })
   }
@@ -138,70 +139,15 @@ export class ShedulesComunitysComponent implements OnInit {
     this.httpCoreService.post(req, Endpoints.GetListComunity).subscribe(res => {
       if (res.isSuccess) {
         this.lsComunity = res.data[0];
+        this.loadDataShedule();
+        this.loadDataDiaAgenda();        
       }
     }
     )
   }
 
-  loadDataUser(){
-    let req = {
-      iid_user: this.iidUser,
-      vcode: "",
-      vfirst_name: "",
-      vlast_name: "",
-      vemail: "",
-      inumber_document: -1,
-      itype_document: -1,
-      iphone: -1,
-      vaddress: "",
-      iid_department: -1,
-      iid_profile: -1,
-      iid_comunity: -1,
-      istate_record: -1,
-      iindex: 0,
-      ilimit: 1000,
-    }
-
-    this.httpCoreService.post(req, Endpoints.GetListUsers).subscribe(res => {
-
-      if (res.isSuccess) {
-        this.lsUser =res.data[0];
-        console.log("this.lsUser:", this.lsUser)
-        this.description_user = this.lsUser.vfirst_name + ' || Rango '+ this.lsUser.vrange_member + ' || Zona Horaria: '+ this.lsUser.vtime_zone ;
-        this.loadDataRange();
-        this.loadDataTypeStream();
-        this.loadDataHourStream();       
-
-      }
-    });
-  }
-
   
-  loadDataRange(){
-
-    let req = {
-      iid_range: this.lsUser.iid_range_member,
-      vname_range: '',
-      vdescription_range: '',
-  
-      istate_record: -1,
-      iindex: 0,
-      ilimit: 10
-    }
-
-    this.httpCoreService.post(req, Endpoints.GetListRange).subscribe(res => {
-      if (res.isSuccess) {
-        this.lsRange = res.data[0];
-      }
-    })
-  }
-
-
-
-
-
-  saveShedule(){
-
+ saveShedule(){
     let value = this.formAgenda.value;
 
     let req = {
@@ -212,18 +158,89 @@ export class ShedulesComunitysComponent implements OnInit {
       vhour_shedule_weekly: value.intHour.substring(0,5),
       itype_stream: value.intTypeStream,
       iid_week_shedule_weekly:this.numberSemana,
-      iid_user: this.iidUser,
-      iid_comunity: this.lsUser.iid_comunity,
+      iid_user: this.lsUser.iid_user,
+      iid_comunity: this.lsComunity.iid_comunity,
       istate_record: 1,
     }
-    console.log("req:", req)
     this.httpCoreService.post(req, Endpoints.RegisterShedule).subscribe(res => {
+      console.log("res:", res)
       if (res.isSuccess) {
+        this.loadDataDiaAgenda();        
         this.loadDataShedule();
+        this.lstHourStream = [];
+        this.formAgenda.reset();
+        this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_AGENDA_REGISTRADA);
+      }
+      else{
+        this.commonService.HanddleErrorMessage(res);
+
       }
     })
 
   }
+
+
+
+  //#region  CARGA CBS
+
+  loadDataDiaAgenda() {
+    let req ={
+      iid_week_shedule_weekly : this.currentWeek,
+      iid_comunity : this.lsComunity.iid_comunity
+    }
+    this.httpCoreService.post(req,Endpoints.GetListDayAvailableByWeek).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstDiaAgenda = res.data;
+      }
+    });
+  }
+
+  loadDataTypeStream(){    
+    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDTypeSream).subscribe(res => {
+      if (res.isSuccess) {
+        if(this.lsUser.ihours_vip_range_user != 0 && this.lsUser.ihours_normal_range_user != 0){
+          this.lstTypeSream = res.data;
+        }
+        else if(this.lsUser.ihours_normal_range_user == 0 ){
+          this.lstTypeSream = res.data.filter((x:any)=> x.id != 1);//solo agendara VIP
+        }
+        else{
+          this.lstTypeSream = res.data.filter((x:any)=> x.id != 2);//solo agendara normal        
+        }       
+      }
+    });
+  }
+
+  loadDataHourStream(){  
+    let value = this.formAgenda.value;
+
+    let req ={
+      iid_week_shedule_weekly : this.currentWeek,
+      iid_comunity : this.lsComunity.iid_comunity,
+      iid_day_shedule_weekly :value.intDay,
+    }  
+    this.lstHourStream = [];
+
+    this.httpCoreService.post(req,Endpoints.GetListHourAvailableByDay).subscribe(res => {
+      if (res.isSuccess) {
+         this.lstHourStream = res.data ;
+      }
+    });  
+  } 
+
+//#endregion
+
+  validarAperturaAgenda(hour:any):boolean{
+    const parts : number [] = hour.split(':');
+    const parts_range :  number [] = this.lsUser.vtime_agenda_range_user.split(':');
+
+    if(parts[0] >= parts_range[0] && parts[1] >= parts_range[1]){      
+      return true;
+    }
+    return false;
+  }
+
+
 
   getWeekNumber(date: Date, daysToAdd: number): number {
     const tempDate: any = new Date(date);
@@ -250,78 +267,6 @@ export class ShedulesComunitysComponent implements OnInit {
     return  `Hoy es ${diaSemana} ${diaMes}  posicion ${this.positionDay} del array`;
   }
   
-
-  
-  loadDataDiaAgenda() {
-    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDiaAgenda).subscribe(res => {
-      if (res.isSuccess) {
-        this.lstDiaAgenda = res.data.filter((x:any)=> x.id > this.positionDay );
-      }
-    });
-  }
-
-
-  loadDataTypeStream(){    
-    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDTypeSream).subscribe(res => {
-      if (res.isSuccess) {
-
-        if(this.lsRange.ihours_vip_range != 0 && this.lsRange.ihours_normal_range != 0){
-          this.lstTypeSream = res.data;
-        }
-        else if(this.lsRange.ihours_normal_range == 0 ){
-          this.lstTypeSream = res.data.filter((x:any)=> x.id != 2);//solo agendara VIP
-        }
-        else{
-          this.lstTypeSream = res.data.filter((x:any)=> x.id != 1);//solo agendara normal        
-        }       
-      }
-    });
-  }
-
-  loadDataHourStream(){    
-
-    this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDHourSream).subscribe(res => {
-      if (res.isSuccess) {
-        const zone_horaria:any = res.data.find((x:any) => x.id === this.lsUser.iid_time_zone);
-        const zone_horaria_mx:any = res.data.find((x:any) => x.id === 1);
-
-        this.lstHourStream = this.generateHoursRange(zone_horaria.ivalue1,zone_horaria.vvalue3,zone_horaria_mx.ivalue1);
-      }
-    });
-  }
-
-  
-  generateHoursRange(start: number, name_zone:string,vaule_hour_mx:number): ComboModel[] {
-
-    const hoursRange: ComboModel[] = [];
-    for (let i = 0; i < 14; i++) {
-      let inicio = start + i;
-      let inicio_mx = vaule_hour_mx + i;
-      if(inicio == 23){       
-        start = -1 - i;      
-      }     
-      let item ={
-        id:i,
-        vvalue1 :`${inicio< 10 ? '0' + inicio : inicio}:00   | HORA ${name_zone}`,
-        vvalue2 :`${inicio_mx< 10 ? '0' + inicio_mx : inicio_mx}:00`
-      }
-
-      hoursRange.push(item);
-    }
-    return hoursRange;
-  }
-
-
-  validarAperturaAgenda(hour:any):boolean{
-    const parts : number [] = hour.split(':');
-    const parts_range :  number [] = this.lsRange.vtime_agenda_range.split(':');
-
-    if(parts[0] >= parts_range[0] && parts[1] >= parts_range[1]){      
-      return true;
-    }
-    return false;
-  }
-
 
   loadDataMonth(){
     this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDMonth).subscribe(res => {

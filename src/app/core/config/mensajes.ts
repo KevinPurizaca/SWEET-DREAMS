@@ -18,6 +18,7 @@ export const MSG_CRUD = {
     MSG_PREGUNTA_GUARDAR_CORREO:  '¿Desea Guardar los Cambios y Enviar el Correo?',
 
     MSG_CORREO_ENVIADO:  'Correo Electrónico Enviado.',
+    MSG_AGENDA_REGISTRADA: 'Agenda Guardada Correctamente.',
 
     MSG_ERROR: ''
 }
