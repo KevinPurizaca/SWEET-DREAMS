@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './views/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { LoginComponent } from './views/components/auth/login/login.component';
+import { UserLoggedGuard } from './core/guards/user-logged.guard';
+import { IntentoLoginGuard } from './core/guards/intento-login.guard';
 
 const routes: Routes = [
     {
@@ -21,26 +23,26 @@ const routes: Routes = [
     {
         path: '', component: AppLayoutComponent,
         children: [
-            { path: 'Masters', loadChildren: () => import('./views/masters/masters.module').then(m => m.MastersModule) },
+            { path: 'Masters', loadChildren: () => import('./views/masters/masters.module').then(m => m.MastersModule),canActivate: [UserLoggedGuard] },
         ]
     },
     {
         path: '', component: AppLayoutComponent,
         children: [
-            { path: 'Group-Comunity', loadChildren: () => import('./views/Comunitys/comunitys.module').then(m => m.ComunitysModule) },
+            { path: 'Group-Comunity', loadChildren: () => import('./views/Comunitys/comunitys.module').then(m => m.ComunitysModule),canActivate: [UserLoggedGuard] },
 
         ]
     },
               {
         path: '', component: AppLayoutComponent,
         children: [
-            { path: 'Administration', loadChildren: () => import('./views/administration/administration.module').then(m => m.AdministrationModule) },
+            { path: 'Administration', loadChildren: () => import('./views/administration/administration.module').then(m => m.AdministrationModule),canActivate: [UserLoggedGuard] },
 
         ]
     },
 
 
-    { path: 'login', component: LoginComponent },
+    { path: 'login', component: LoginComponent,canActivate: [IntentoLoginGuard] },
 
     { path: 'notfound', component: NotfoundComponent },
     { path: '**', redirectTo: '/notfound' },

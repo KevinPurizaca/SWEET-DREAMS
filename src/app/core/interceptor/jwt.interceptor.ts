@@ -24,26 +24,18 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    // debugger
-
 
     if (this.authService.estaLogueado()) {
       let token = localStorage.getItem('token');
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
-          // "Ocp-Apim-Subscription-Key": environment.key_ApiManagement
         },
       });
     } else {
 
       if(this.router.url != '/recuperar-clave') 
         this.router.navigate(['/login']);
-      // request = request.clone({
-      //   setHeaders: {
-      //     // 'Ocp-Apim-Subscription-Key': environment.key_ApiManagement
-      //   },
-      // });
     }
 
     return next.handle(request);

@@ -8,12 +8,13 @@ import { Router } from "@angular/router";
 import { HttpCoreService } from "./httpCore.service";
 import { ConfirmationService } from 'primeng/api';
 import { environment } from "src/environments/environment";
+import { JwtHelperService } from "@auth0/angular-jwt";
 @Injectable()
 export class AuthenticationService {
   // private secretKey = environment.secretKeyEncript;
 
-  // private jwtHelper = new JwtHelperService();
   public tokenRenovado = new BehaviorSubject(false)
+  private jwtHelper = new JwtHelperService();
 
   constructor(
     private router: Router,
@@ -26,16 +27,16 @@ export class AuthenticationService {
     if (token == null || token=='') {
       return false;
     } else {
-      return true;
-      //  const isExpired = this.jwtHelper.isTokenExpired(token);
-      //  this.isVerificaTiempo(token);
-      //  if (isExpired) {
+      //return true;
+       const isExpired = this.jwtHelper.isTokenExpired(token);
+       this.isVerificaTiempo(token);
+       if (isExpired) {
 
-      //   localStorage.setItem('token', '');
-      //   return false;
-      // } else {
-      //   return true;
-      //  }
+        localStorage.setItem('token', '');
+        return false;
+      } else {
+        return true;
+       }
     }
   }
 
@@ -88,6 +89,7 @@ export class AuthenticationService {
   }
 
   verifyTokenAndLogout() {
+    console.log("verifyTokenAndLogout:")
     if (this.esTokenExpirado()) {
       this.logOut();
     }
@@ -104,16 +106,16 @@ export class AuthenticationService {
     } else {
 
       //return false;
-      //  const isExpired = this.jwtHelper.isTokenExpired(token);
+       const isExpired = this.jwtHelper.isTokenExpired(token);
         this.isVerificaTiempo(token);
-        return true;
-      //  if (isExpired) {
+
+       if (isExpired) {
         // localStorage.removeItem('token')
-      //   localStorage.setItem('token', '');
-      //   return false;
-      // } else {
-      //   return true;
-      // }
+        localStorage.setItem('token', '');
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 

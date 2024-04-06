@@ -118,7 +118,10 @@ export class ShedulesComunitysComponent implements OnInit {
       if (res.isSuccess) {
         this.lstShedule = res.data;    
         this.sheduleAvailable = res.sheduleAvailable;    
+        this.lstTypeSream = res.normalAvailable ? this.lstTypeSream : this.lstTypeSream.filter(x => x.id != 1);
         this.lstTypeSream = res.vipAvailable ? this.lstTypeSream : this.lstTypeSream.filter(x => x.id != 2);
+
+        
       }  
     })
   }

@@ -48,6 +48,7 @@ export class LoginComponent {
 
 
     login() {
+
         if(this.authService.estaLogueado()){
           this.router.navigate(['/inicio/home']);
           return;
