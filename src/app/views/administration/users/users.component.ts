@@ -283,50 +283,10 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  // timeZones: TimeZone[] = [
-  //   { name: 'Hora Colombia', startHour: 10, endHour: 23 },
-  //   { name: 'Hora España', startHour: 17, endHour: 6 },
-  //   { name: 'Hora Mexico', startHour: 12, endHour: 1 },
-  //   { name: 'Hora Argentina', startHour: 9, endHour: 22 },
-
-  // ];
-
-  // selectedTimeZones: TimeZone[] = [];
-
-  // updateTimeZoneHours(timeZone: any) {
-  //   this.selectedTimeZones = [];
-  //   if (timeZone === 'Hora Colombia') {
-  //     this.selectedTimeZones.push({ name: 'Hora Colombia', startHour: 10, endHour: 23 });
-  //   } else if (timeZone === 'Hora España') {
-  //     this.selectedTimeZones.push({ name: 'Hora España', startHour: 17, endHour: 6 });
-  //   }
-  //   else if (timeZone === 'Hora Argentina') {
-  //     this.selectedTimeZones.push({ name: 'Hora Argentina', startHour: 12, endHour: 1 });
-  //   }
-  //   else if (timeZone === 'Hora Mexico') {
-  //     this.selectedTimeZones.push({ name: 'Hora Mexico', startHour: 9, endHour: 22 });
-  //   }
-
-  // }
-
-  // generateHoursRange(start: number, end: number): string[] {
-  //   // console.log("start:", start)
-  //   // console.log("end:", end)
-  //   const hoursRange: string[] = [];
-  //   for (let i = 0; i < 14; i++) {//i =14; i<= 6
-  //     // debugger
-  //     let inicio = start + i;
-  //     //console.log("inicio:", inicio)
-
-  //     if(inicio == 23){
-  //       hoursRange.push(`${inicio < 10 ? '0' + inicio : inicio}:00`);
-  //       console.log("hoursRange:", hoursRange)
-  //       start = -1 - i;      
-  //     }
-  //     else{
-  //       hoursRange.push(`${inicio< 10 ? '0' + inicio : inicio}:00`);
-  //     }
-  //   }
-  //   return hoursRange;
-  // }
+  changePage(event: any) {
+    this.req.iindex = event.first;
+    this.req.ilimit = event.rows;
+    this.first = event.first;
+    this.loadData(this.req);
+  }
 }

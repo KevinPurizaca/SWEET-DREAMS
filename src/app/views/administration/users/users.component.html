@@ -153,7 +153,7 @@
     </ng-template>
   </p-table>
   <p-paginator [rows]="req.ilimit" [totalRecords]="totalRecord" [rowsPerPageOptions]="rowsOptions"
-  [showCurrentPageReport]="true" [first]="first"
+  [showCurrentPageReport]="true" [first]="first" (onPageChange)="changePage($event)"
   currentPageReportTemplate="Total : {totalRecords} registros"></p-paginator>
 </p-panel>
 

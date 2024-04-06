@@ -42,12 +42,24 @@ export class AuthenticationService {
   logIn(data: any) {
     return this.httpCoreService.post(data, Endpoints.LOGIN).pipe(
       tap((res: any) => {
-        if (res.IsSuccess) {
-        
+        if (res.isSuccess) {        
+          let _menu = this.organizarDatosPorModulo(res.item.menu);
+          let menu_forma:any[] =[]; 
+          menu_forma.push({
+            items:[
+                ..._menu
+            ]
+          })
+          localStorage.setItem('menu', JSON.stringify(menu_forma));
+          localStorage.setItem('userdata', JSON.stringify(res.item.userdata));
+          localStorage.setItem('token', res.token);
+
+
+          
         //  const userDataEncriptado = CryptoJS.AES.encrypt(JSON.stringify(res.data), this.secretKey).toString();
         //  const menuEncriptado = CryptoJS.AES.encrypt(JSON.stringify(res.data.perfil.permisos), this.secretKey).toString();
 
-         localStorage.setItem('token', res.tokens.access.token);
+        //  localStorage.setItem('token', res.tokens.access.token);
         //  localStorage.setItem('menu', JSON.stringify(res.data.perfil.permisos));
         //  localStorage.setItem('userdata', JSON.stringify(res.data));
         //  localStorage.setItem('menu', menuEncriptado);
@@ -112,4 +124,41 @@ export class AuthenticationService {
        const timeout = expires.getTime() - Date.now();
   }
 
+  organizarDatosPorModulo(datos: any[]): any[] {
+    const modules = [];
+
+    datos.forEach(objeto => {
+        const moduloID = objeto.iid_module;
+
+        // Buscar si el módulo ya existe en la lista de módulos
+        const moduloExistente = modules.find(modulo => modulo.label === objeto.vname_module);
+
+        // Si el módulo no existe, agregarlo a la lista de módulos
+        if (!moduloExistente) {
+            modules.push({       
+                iid_module : objeto.iid_module,           
+                label: objeto.vname_module,
+                icon: 'pi pi-'+objeto.vicon_module,
+                vurl_module: objeto.vurl_module,
+                vurl_module_complete: objeto.vurl_module + "/" +objeto.vurl_option.split('/')[1] ,
+
+                items: []   
+            });
+        }
+
+        // Buscar el módulo recién agregado o ya existente en la lista
+        const moduloActual = modules.find(modulo => modulo.label === objeto.vname_module);
+
+        // Agregar la opción al módulo
+        moduloActual.items.push({
+            label: objeto.vname_option,
+            iid_module : objeto.iid_module,           
+            icon: 'pi pi-' + objeto.vicon_option, // Reemplaza 'vicon_option' por el nombre real del campo de ícono
+            routerLink: [objeto.vurl_module, objeto.vurl_option].join(''),// Concatena las URL del módulo y la opción
+            iid_comunity : objeto.iid_comunity,
+        });
+    });
+
+    return modules;
+}
 }

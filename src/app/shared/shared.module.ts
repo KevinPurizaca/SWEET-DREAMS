@@ -20,7 +20,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ChartModule } from 'primeng/chart';
 import { StyleClassModule } from 'primeng/styleclass';
 import { FileUploadModule } from 'primeng/fileupload';
-
+import { PasswordModule } from 'primeng/password';
 
 import { DividerModule } from 'primeng/divider';
 
@@ -47,7 +47,8 @@ import { DividerModule } from 'primeng/divider';
     FileUploadModule,
     StyleClassModule,
     ChartModule,    
-    DividerModule
+    DividerModule,
+    PasswordModule
   ],
   exports: [
     CommonModule,
@@ -71,7 +72,8 @@ import { DividerModule } from 'primeng/divider';
     FileUploadModule,
     StyleClassModule,
     ChartModule,
-    DividerModule
+    DividerModule,
+    PasswordModule
   ],
   providers: []
 })

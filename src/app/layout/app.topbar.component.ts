@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
+import { UtilService } from '../core/util/util.services';
+import { AuthenticationService } from '../core/services/authentication.service';
 
 @Component({
     selector: 'app-topbar',
@@ -8,8 +10,12 @@ import { LayoutService } from "./service/app.layout.service";
 })
 export class AppTopBarComponent {
 
+    userData: any;
+
     items!: MenuItem[];
     items2: MenuItem[] | undefined;
+
+    showSidebar: boolean = false;
 
     @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -20,7 +26,11 @@ export class AppTopBarComponent {
     icon:string ='';
 
 
-    constructor(public layoutService: LayoutService) 
+    constructor(
+        public layoutService: LayoutService, 
+        private authService: AuthenticationService,
+        private utilService:UtilService,
+    ) 
     {
         let theme = localStorage.getItem('theme_admin') ||'saga-blue';//sino existe lo cambiamos a tema por defecto
         this.icon = theme === 'saga-blue'?'pi pi-moon':'pi pi-sun';
@@ -28,80 +38,11 @@ export class AppTopBarComponent {
         const newColor =  theme === 'saga-blue'? 'light': 'dark';//light':'dark';
         this.changeTheme(theme, newColor);
 
-        this.getMenu();
+        this.getUserLocalStorage();
+
+        
     }
 
-    getMenu(){
-        this.items2 = [
-            {
-                label: 'File',
-                icon: 'pi pi-file',
-                items: [
-                    {
-                        label: 'New',
-                        icon: 'pi pi-plus',
-                        items: [
-                            {
-                                label: 'Document',
-                                icon: 'pi pi-file'
-                            },
-                            {
-                                label: 'Image',
-                                icon: 'pi pi-image'
-                            },
-                            {
-                                label: 'Video',
-                                icon: 'pi pi-video'
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Open',
-                        icon: 'pi pi-folder-open'
-                    },
-                    {
-                        label: 'Print',
-                        icon: 'pi pi-print'
-                    }
-                ]
-            },
-            {
-                label: 'Edit',
-                icon: 'pi pi-file-edit',
-                items: [
-                    {
-                        label: 'Copy',
-                        icon: 'pi pi-copy'
-                    },
-                    {
-                        label: 'Delete',
-                        icon: 'pi pi-times'
-                    }
-                ]
-            },
-            {
-                label: 'Search',
-                icon: 'pi pi-search'
-            },
-            {
-                separator: true
-            },
-            {
-                label: 'Share',
-                icon: 'pi pi-share-alt',
-                items: [
-                    {
-                        label: 'Slack',
-                        icon: 'pi pi-slack'
-                    },
-                    {
-                        label: 'Whatsapp',
-                        icon: 'pi pi-whatsapp'
-                    }
-                ]
-            }
-        ]
-    }
     changeTheme(theme: string, colorScheme: string) {
        
         this.theme = theme;
@@ -140,5 +81,21 @@ export class AppTopBarComponent {
     }
 
     
-
+    getUserLocalStorage() {
+        const userdata =  this.utilService.getItemStorage('userdata');
+    
+        if(userdata){
+          if (Object.keys(userdata).length > 0) {
+            this.userData = userdata;
+          }
+        }  
+      }
+      showProfileSidebar() {
+        this.showSidebar = true;
+      }
+    
+    
+      LogOut() {
+        this.authService.logOut();
+      }
 }

@@ -26,7 +26,7 @@
               <div class="col-12 md:col-3">
                 <label class="label-filter-text">Hora de Stream</label>                
                 <p-dropdown formControlName="intHour"  [placeholder]="vMessageSelect" 
-                optionLabel="vvalue1" optionValue="vvalue1" appendTo="body"  
+                optionLabel="vvalue1" optionValue="vvalue2" appendTo="body"  
                 [emptyMessage]="vMessageEmpty" [options]="lstHourStream" ></p-dropdown>
               </div>
 
@@ -53,5 +53,77 @@
 <br>
 
 <p-panel  header="MI AGENDA SEMANAL">
-    <!-- *ngIf="lsUser.buser_member" -->
+  <p-table [value]="lstShedule" dataKey="id" [rows]="5"  [rowHover]="true"
+  styleClass="p-datatable-gridlines" responsiveLayout="scroll" [scrollable]="true" class="m-1" >
+  
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="td-code" pFrozenColumn>Zona Horaria</th>
+        <th class="td-name" >Lunes</th>
+        <th class="td-name" >Martes</th>
+        <th class="td-name" >Miercoles</th>
+        <th class="td-name" >Jueves</th>
+        <th class="td-name" >Viernes</th>
+        <th class="td-name" >Sabado</th>
+     </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data>
+      <tr>
+        <td class="td-code  font-bold"  pFrozenColumn>{{data.vzone_time_user}}</td>
+        <td class="td-name  " >
+          <div *ngFor="let item of data.vday_monday">
+              <span>{{item.vname_channel}}</span>
+              <br>
+          </div>
+        </td>
+
+        <td class="td-name  " >
+          <div *ngFor="let item of data.vday_tuesday">
+              <span>{{item.vname_channel}}</span>
+              <br>
+          </div>
+        </td>
+
+        <td class="td-name  " >
+          <div *ngFor="let item of data.vday_wednesday">
+              <span>{{item.vname_channel}}</span>
+              <br>
+          </div>
+        </td>
+
+        <td class="td-name  " >
+          <div *ngFor="let item of data.vday_thursday">
+              <span>{{item.vname_channel}}</span>
+              <br>
+          </div>
+        </td>
+
+        <td class="td-name  " >
+          <div *ngFor="let item of data.vday_friday">
+              <span>{{item.vname_channel}}</span>
+              <br>
+          </div>
+        </td>
+
+        <td class="td-name  " >
+          <div *ngFor="let item of data.vday_saturday">
+              <span>{{item.vname_channel}}</span>
+              <br>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7">No se encontró Información.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="7">
+          Cargando información. Espere por favor.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-panel>

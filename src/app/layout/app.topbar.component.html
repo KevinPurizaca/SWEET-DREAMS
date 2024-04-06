@@ -1,7 +1,11 @@
+
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="">
-        <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo">
-        <span>COMUNIDAD SWEET</span>
+
+
+    <a class="layout-topbar-logo" routerLink="/inicio/home">
+        <img *ngIf="userData.iid_comunity_user" src="{{userData.vurl_image_comunity_user}}" alt="logo" 
+        style="height: 4.5rem;width: 4.5rem;border-radius: 1rem;">
+        <span>{{userData.iid_comunity_user ? userData.vname_comunity_user: userData.vname_profile_user}}</span>
     </a>
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
@@ -16,25 +20,93 @@
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
      
 
-
-        <button class="p-link layout-topbar-button">
+        <div class="data-user-logged">
+            <div class="user-logged">
+              <span class=""> {{userData.vchannel_twitch_user}}</span>
+              <br>
+              <span >Rango: <b>{{userData.vrange_user}}</b> </span>          
+            </div>
+            <!-- <div class="user-logged font-bold"></div> -->
+          </div>
+        <!-- <button class="p-link layout-topbar-button">
             <i class="pi pi-calendar"></i>
             <span>Calendar</span>
-        </button>
+        </button> -->
 
 
-        <button #btn class="p-link layout-topbar-button" >
+      <!--   <button #btn class="p-link layout-topbar-button" >
             <i class="pi pi-user"></i>
             <span>Profile</span>
-        </button>
+        </button> -->
 
         <button class="p-link layout-topbar-button" (click)="changeThemeDarkLight()">
             <i [class]="icon"></i>
             <span>{{icon==='pi pi-moon' ? 'Modo Oscuro' :'Modo Claro' }}</span>
-        </button>
-
+        </button>     
         
+        <button class="p-link layout-topbar-button" (click)="showProfileSidebar()">
+            <i class="pi pi-user"></i>
+            <!-- <span>{{icon==='pi pi-moon' ? 'Modo Oscuro' :'Modo Claro' }}</span> -->
+        </button>     
+
+        <!-- <button pButton type="button" icon="pi pi-user" styleClass="p-button-info mr-2"
+        (click)="showProfileSidebar()"></button> -->
 
     </div>    
 </div>
+
+
+
+
+<p-sidebar [(visible)]="showSidebar" position="right" styleClass="layout-profile-sidebar w-full sm:w-25rem">
+    <ul class="list-data list-none m-0 p-0">
+      <li><a
+          class="flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"><span><i
+              class="pi pi-star text-xl text-primary"></i></span>
+          <div class="ml-3"><span class="mb-2 font-semibold">Rango</span>
+            <p class="data-user text-color-secondary m-0">{{userData?.vrange_user}}</p>
+          </div>
+        </a></li>
+  
+      <li *ngIf="userData.iid_comunity_user"><a
+          class="flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"><span><i
+              class="pi pi-th-large text-xl text-primary"></i></span>
+          <div class="ml-3"><span class="mb-2 font-semibold">Comunidad</span>
+            <p class="data-user text-color-secondary m-0">{{userData?.vname_comunity_user}}</p>
+          </div>
+        </a></li>
+  
+      <li><a
+          class="flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"><span><i
+              class="pi pi-clock text-xl text-primary"></i></span>
+          <div class="ml-3"><span class="mb-2 font-semibold">Zona Horaria</span>
+            <p class="user-data text-color-secondary m-0">{{userData?.vtime_zone_user}}</p>
+          </div>
+        </a></li>
+
+      <li><a
+          class="flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"><span><i
+              class="pi pi-user text-xl text-primary"></i></span>
+          <div class="ml-3"><span class="mb-2 font-semibold">Canal</span>
+            <p class="data-user text-color-secondary m-0">{{userData.vchannel_twitch_user}}</p>
+          </div>
+        </a></li>
+
+        <li><a
+            class="flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"><span><i
+                class="pi pi-globe text-xl text-primary"></i></span>
+            <div class="ml-3"><span class="mb-2 font-semibold">Link Canal</span>
+              <p class="data-user text-color-secondary m-0">{{userData.vurl_channel_twitch_user}}</p>
+            </div>
+          </a></li>
+  
+      <li><a (click)="LogOut()"
+          class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"><span><i
+              class="pi pi-power-off text-xl text-purple-600"></i></span>
+          <div class="ml-3"><span class="mb-2 font-semibold text-purple-600">Cerrar sesión</span>
+            <p class="data-user text-color-secondary m-0">Salir del sistema</p>
+          </div>
+        </a></li>
+    </ul>
+  </p-sidebar>
 

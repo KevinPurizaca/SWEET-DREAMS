@@ -108,7 +108,7 @@ export class UtilService {
     }
 
     getItemStorage(item:any):any{
-        let _item = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : []; //localStorage.getItem(item);
+        let _item = localStorage.getItem(item) ? JSON.parse(localStorage.getItem(item)) : []; //localStorage.getItem(item);
         if(_item){
             // const bytes = CryptoJS.AES.decrypt(_item, this.secretKey);
             // const valorDesencriptado = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))  ;

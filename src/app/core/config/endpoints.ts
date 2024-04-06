@@ -1,5 +1,5 @@
 export const Endpoints = {
-  LOGIN: '/seguridad/login',
+  LOGIN: '/Auth/Login',
   GENERA_CODIGO: '/seguridad/genera_codigo',
   PASS_RECOVER: '/seguridad/setUsuarioResetPassword',
   GET_SUBMENU: '/Opcion/GetSubMenu',
@@ -49,4 +49,8 @@ export const Endpoints = {
   GetListComunity :'/Masters/Comunity/GetListComunity',  
   RegisterComunity :'/Masters/Comunity/RegisterComunity',  
   DeleteComunity :'/Masters/Comunity/DeleteComunity?iid_comunity=',
+  GetListSheduleByWeek :'/Masters/Shedule/GetListSheduleByWeek?iid_week_shedule_weekly=',  
+
+
+  
 }

@@ -23,62 +23,12 @@ export class AppMenuComponent implements OnInit {
 
     loadData(){
         //crear meqtodo para qtraer los accesos por perfil
-    this.httpCoreService.get(Endpoints.GetListProfileAccessByProfile + 1).subscribe(res =>{
-        if(res.isSuccess){
-            let primernivel:any[] = this.organizarDatosPorModulo(res.data.filter((x:any)=> x.baccess_view === true));
-            this.model.push({
-                items:[
-                    ...primernivel
-                ]
-            })
-            localStorage.removeItem('menu');
-
-            localStorage.setItem('menu', JSON.stringify(this.model));
-        }
-    })
-
-      //this.model = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : [];  
-}
+      this.model = localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : [];  
+    }
 
   
 
-    organizarDatosPorModulo(datos: any[]): any[] {
-        const modules = [];
-    
-        datos.forEach(objeto => {
-            const moduloID = objeto.iid_module;
-    
-            // Buscar si el módulo ya existe en la lista de módulos
-            const moduloExistente = modules.find(modulo => modulo.label === objeto.vname_module);
-    
-            // Si el módulo no existe, agregarlo a la lista de módulos
-            if (!moduloExistente) {
-                modules.push({       
-                    iid_module : objeto.iid_module,           
-                    label: objeto.vname_module,
-                    icon: 'pi pi-'+objeto.vicon_module,
-                    vurl_module: objeto.vurl_module,
-                    vurl_module_complete: objeto.vurl_module + "/" +objeto.vurl_option.split('/')[1] ,
 
-                    items: []   
-                });
-            }
-    
-            // Buscar el módulo recién agregado o ya existente en la lista
-            const moduloActual = modules.find(modulo => modulo.label === objeto.vname_module);
-    
-            // Agregar la opción al módulo
-            moduloActual.items.push({
-                label: objeto.vname_option,
-                iid_module : objeto.iid_module,           
-                icon: 'pi pi-' + objeto.vicon_option, // Reemplaza 'vicon_option' por el nombre real del campo de ícono
-                routerLink: [objeto.vurl_module, objeto.vurl_option].join(''),// Concatena las URL del módulo y la opción
-                iid_comunity : objeto.iid_comunity,
-            });
-        });
-    
-        return modules;
-    }
     
       setMenu(){
         this.model =       [

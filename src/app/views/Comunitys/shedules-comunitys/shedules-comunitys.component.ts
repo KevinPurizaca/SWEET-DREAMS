@@ -25,11 +25,12 @@ export class ShedulesComunitysComponent implements OnInit {
   nameComunity: string = '';
   lsComunity:any = {};
 
-  iidUser:number = 5;
+  iidUser:number = 1;
   lsUser:any = {};
   lsRange:any = {};
 
-  lsShedule:any []= [];
+  lstShedule:any []= [];
+
   fechaActual: Date;
   formAgenda: FormGroup;
 
@@ -94,7 +95,8 @@ export class ShedulesComunitysComponent implements OnInit {
       let hora_dia = this.obtenerDiaYHora(0);
       console.log("hora_dia:", hora_dia)
 
-      this. loadDataDiaAgenda();
+      this.loadDataDiaAgenda();
+      this.loadDataShedule();
 
       interval(1000).pipe(
         map(() => {
@@ -109,6 +111,15 @@ export class ShedulesComunitysComponent implements OnInit {
     });
   }
 
+
+  loadDataShedule(){
+    this.httpCoreService.get(Endpoints.GetListSheduleByWeek+this.currentWeek).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstShedule = res.data;        
+        console.log("this.lsSheduleUser:", this.lstShedule)
+      }  
+    })
+  }
 
   loadDataComunity(){
     const parts: string[] = this.router.url.split('/');
@@ -185,19 +196,9 @@ export class ShedulesComunitysComponent implements OnInit {
     })
   }
 
-  loadDataSheduleByUser(){
-    let req = {
-      iid_range: this.lsUser.iid_range_member,
-      vname_range: '',
-      vdescription_range: '',
-  
-      istate_record: -1,
-      iindex: 0,
-      ilimit: 10
-    }
 
-    this.lsShedule = [];
-  }
+
+
 
   saveShedule(){
 
@@ -212,12 +213,13 @@ export class ShedulesComunitysComponent implements OnInit {
       itype_stream: value.intTypeStream,
       iid_week_shedule_weekly:this.numberSemana,
       iid_user: this.iidUser,
+      iid_comunity: this.lsUser.iid_comunity,
       istate_record: 1,
     }
     console.log("req:", req)
     this.httpCoreService.post(req, Endpoints.RegisterShedule).subscribe(res => {
       if (res.isSuccess) {
-        this.loadDataSheduleByUser();
+        this.loadDataShedule();
       }
     })
 
@@ -281,23 +283,27 @@ export class ShedulesComunitysComponent implements OnInit {
     this.httpCoreService.get(Endpoints.GetListTableDetailCB + this.paramTDHourSream).subscribe(res => {
       if (res.isSuccess) {
         const zone_horaria:any = res.data.find((x:any) => x.id === this.lsUser.iid_time_zone);
-        this.lstHourStream = this.generateHoursRange(zone_horaria.ivalue1, zone_horaria.ivalue2,zone_horaria.vvalue3);
+        const zone_horaria_mx:any = res.data.find((x:any) => x.id === 1);
+
+        this.lstHourStream = this.generateHoursRange(zone_horaria.ivalue1,zone_horaria.vvalue3,zone_horaria_mx.ivalue1);
       }
     });
   }
 
   
-  generateHoursRange(start: number, end: number,name_zone:string): ComboModel[] {
+  generateHoursRange(start: number, name_zone:string,vaule_hour_mx:number): ComboModel[] {
 
     const hoursRange: ComboModel[] = [];
     for (let i = 0; i < 14; i++) {
       let inicio = start + i;
+      let inicio_mx = vaule_hour_mx + i;
       if(inicio == 23){       
         start = -1 - i;      
       }     
       let item ={
         id:i,
-        vvalue1 :`${inicio< 10 ? '0' + inicio : inicio}:00   | HORA ${name_zone}`
+        vvalue1 :`${inicio< 10 ? '0' + inicio : inicio}:00   | HORA ${name_zone}`,
+        vvalue2 :`${inicio_mx< 10 ? '0' + inicio_mx : inicio_mx}:00`
       }
 
       hoursRange.push(item);
