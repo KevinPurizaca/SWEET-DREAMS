@@ -37,6 +37,9 @@ export class ShedulesComunitysComponent implements OnInit {
 
   vMessageEmpty: string = MESSAGE_EMPTY;
   vMessageSelect: string = MESSAGE_SELECT;
+  hourback: string = "";
+
+  
 
   lstDiaAgenda: ComboModel[] = [];
   lstHourStream : ComboModel[] = [];
@@ -121,6 +124,8 @@ export class ShedulesComunitysComponent implements OnInit {
         this.lstTypeSream = res.normalAvailable ? this.lstTypeSream : this.lstTypeSream.filter(x => x.id != 1);
         this.lstTypeSream = res.vipAvailable ? this.lstTypeSream : this.lstTypeSream.filter(x => x.id != 2);
 
+
+        this.hourback = res.horaAgenda
         
       }  
     })
