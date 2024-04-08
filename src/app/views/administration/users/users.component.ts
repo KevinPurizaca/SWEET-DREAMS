@@ -92,7 +92,7 @@ export class UsersComponent implements OnInit {
     });
 
     this.formRegisterEdit = fre.group({
-      txtFirstName: ['', [Validators.pattern(PATTERNS.Letras), Validators.required]],
+      txtFirstName: ['', [Validators.required]],
       txtLastName: ['',/*[Validators.pattern(PATTERNS.Letras), Validators.required]*/],
       intProfile: [-1],
       intRangeUser: [-1],
