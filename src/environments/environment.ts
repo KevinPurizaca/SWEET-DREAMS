@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  UrlBase:'https://localhost:44318'
+  //UrlBase:'https://localhost:44318',
+  UrlBase:'https://sweetdreams-api.azurewebsites.net'
 };
 
 /*
