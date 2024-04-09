@@ -11,10 +11,7 @@ import * as sha512 from 'js-sha512';
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    standalone: true,
-    imports: [
-        SharedModule        
-    ],
+    standalone: false,
     providers: [UtilService ],
     styles: [`
         :host ::ng-deep .pi-eye,
@@ -79,7 +76,7 @@ export class LoginComponent {
           );
         } else {
           this.isLoading = false;
-          this.commonService.HanddleErrorMessage('Ingrese Información de Usuario');
+          this.commonService.HanddleErrorMessage2('Ingrese Información de Usuario');
         }
       } 
 

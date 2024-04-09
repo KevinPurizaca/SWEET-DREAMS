@@ -34,16 +34,16 @@ export class CommonService {
     });
   }
 
-  // public HanddleErrorMessage2(msg: any) {
-  //   this.messageService.add({
-  //     key: 'tst',
-  //     severity: 'error',
-  //     summary: 'Error Message',
-  //     detail: msg,
-  //     closable:false,
-  //     life: this.tiempoVidaNotificacion,
-  //   });
-  // }
+  public HanddleErrorMessage2(msg: any) {
+    this.messageService.add({
+      key: 'tst',
+      severity: 'error',
+      summary: 'Error Message',
+      detail: msg,
+      closable:false,
+      life: this.tiempoVidaNotificacion,
+    });
+  }
   public HanddleInfoMessage(msg: any) {
     this.messageService.add({
       key: 'tst',

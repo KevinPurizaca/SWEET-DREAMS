@@ -5,6 +5,7 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
 import { LoginComponent } from './views/components/auth/login/login.component';
 import { UserLoggedGuard } from './core/guards/user-logged.guard';
 import { IntentoLoginGuard } from './core/guards/intento-login.guard';
+import { SharedModule } from './shared/shared.module';
 
 const routes: Routes = [
     {
@@ -16,7 +17,7 @@ const routes: Routes = [
           { path: '', redirectTo: 'home', pathMatch: 'full' },
           {
             path: 'home',
-            loadChildren: () => import('./views/components/dashboard/dashboard.module').then(m => m.DashboardModule)
+            loadChildren: () => import('./views/components/dashboard/dashboard.module').then(m => m.DashboardModule), canActivate: [UserLoggedGuard]
            },
         ],
       },
@@ -41,18 +42,21 @@ const routes: Routes = [
         ]
     },
 
-
+    {
+        path: 'auth',
+        loadChildren: () => import('./views/components/auth/auth.module').then(m => m.AuthModule)
+      },
     { path: 'login', component: LoginComponent,canActivate: [IntentoLoginGuard] },
-
-    { path: 'notfound', component: NotfoundComponent },
-    { path: '**', redirectTo: '/notfound' },
+    { path: 'pages/notfound', component: NotfoundComponent },
+    { path: '**', redirectTo: 'pages/notfound' },
 
 ]
 
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
+        SharedModule,
+        RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
     ],
     exports: [RouterModule]
 })
