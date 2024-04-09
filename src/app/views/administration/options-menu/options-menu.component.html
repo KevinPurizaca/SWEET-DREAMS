@@ -32,7 +32,7 @@
 
         <div class="flex flex-wrap sm:flex-row">
             <div class="sm:mr-auto mb-3 mr-3">
-              <button pButton label="Agregar Modulo" type="button" icon="pi pi-plus" class="p-button-help" (click)="viewModal(1,null)"></button>
+              <button *ngIf="bSystemCreator" pButton label="Agregar Modulo" type="button" icon="pi pi-plus" class="p-button-help" (click)="viewModal(1,null)"></button>
             </div>
             <div class="mb-3 mr-3">
               <button pButton label="Buscar" icon="pi pi-search" type="submit" class="p-button-outlined p-button-primary"></button>
@@ -59,13 +59,13 @@
             <th style="min-width:5rem">Id</th>
             <th style="min-width:10rem">Titulo</th>
             <th style="min-width:10rem">Descripcion</th>
-            <th style="min-width:10rem">Url</th>
+            <th style="min-width:10rem"*ngIf="bSystemCreator">Url</th>
             <th style="min-width:10rem">Icono</th>
             <th style="min-width:5rem">Orden</th>
-            <th style="min-width:5rem">Visible</th>
-            <th style="min-width:7rem">Sub menu</th>
+            <th style="min-width:5rem"*ngIf="bSystemCreator">Visible</th>
+            <th style="min-width:7rem"*ngIf="bSystemCreator">Sub menu</th>
             <th style="min-width:5rem">Estado</th>    
-            <th style="min-width:9.5rem" pFrozenColumn alignFrozen="right">Acciones</th>
+            <th style="min-width:9.5rem" pFrozenColumn alignFrozen="right" *ngIf="bSystemCreator">Acciones</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-data>
@@ -73,13 +73,13 @@
             <td style="min-width:5rem" class="font-bold">{{data.iid_module}}</td>
             <td style="min-width:10rem" >{{data.vname_module}}</td>
             <td style="min-width:10rem">{{data.vdescription_module}}</td>
-            <td style="min-width:10rem">{{data.vurl_module}}</td>
+            <td style="min-width:10rem"*ngIf="bSystemCreator">{{data.vurl_module}}</td>
             <td style="min-width:10rem">{{data.vicon_module}}</td>
             <td style="min-width:5rem">{{data.iorder_module}}</td>
-            <td style="min-width:5rem">{{data.bvisible_module}}</td>
-            <td style="min-width:7rem">{{data.bsub_menu_module}}</td>
+            <td style="min-width:5rem"*ngIf="bSystemCreator">{{data.bvisible_module}}</td>
+            <td style="min-width:7rem"*ngIf="bSystemCreator">{{data.bsub_menu_module}}</td>
             <td style="min-width:5rem">{{data.vstate_record}}</td>
-            <td style="min-width:9.5rem" pFrozenColumn  alignFrozen="right">
+            <td style="min-width:9.5rem" pFrozenColumn  alignFrozen="right" *ngIf="bSystemCreator">
               <button pButton icon="pi pi-eye" class="text-blue-500 p-button-text"
               (click)="viewModal(3,data)" pTooltip="Ver Detalle" tooltipPosition="bottom" ></button>
     
@@ -137,7 +137,7 @@
           class="text-red-600"> Ingrese Descripcion</small>
       </div>
       
-      <div class="col-12 md:col-4">
+      <div class="col-12 md:col-4" *ngIf="bSystemCreator">
         <label class="label-filter-text">URL</label>
         <input formControlName="txtUrl" type="text" pInputText class="p-inputtext p-component p-element"  [(ngModel)]="lsModuleDto.vurl_module"  />
 
@@ -192,7 +192,7 @@
         class="text-red-600"> Seleccion Icono.</small>
       </div>
 
-      <div class="col-12 md:col-3">
+      <div class="col-12 md:col-3" *ngIf="bSystemCreator">
         <label class="label-filter-text">Visible</label>                
         <div class="flex justify-content-start">
             <p-checkbox formControlName="intVisible"
@@ -200,7 +200,7 @@
         </div>        
       </div>
 
-      <div class="col-12 md:col-3">
+      <div class="col-12 md:col-3" *ngIf="bSystemCreator">
         <label class="label-filter-text">Sub Menu</label>                
         <div class="flex justify-content-start" >
             <p-checkbox formControlName="intSubMenu" class="ml-4" [(ngModel)]="lsModuleDto.bsub_menu_module" [binary]="true" inputId="binary"></p-checkbox>
@@ -231,7 +231,7 @@
           [closable]="false" [header]="titleEditRegisterOptions" [modal]="true" class="p-fluid">
 
   <ng-template pTemplate="content">
-    <p-panel header="Registrar de Tablas Detalle" [toggleable]="false" class="line-height-3">
+    <p-panel header="Registrar de Tablas Detalle" [toggleable]="false" class="line-height-3"  *ngIf="bSystemCreator">
       <form [formGroup]="formRegisterEditOption">
         <div class="p-fluid p-formgrid grid">
 
@@ -362,7 +362,7 @@
             <th style="min-width:5rem">Visible</th>
 
             <th style="min-width:10rem">Estado</th>
-            <th style="min-width:7rem" pFrozenColumn alignFrozen="right">Acciones</th>
+            <th style="min-width:7rem" pFrozenColumn alignFrozen="right" *ngIf="bSystemCreator">Acciones</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-data>
@@ -421,9 +421,9 @@
               [emptyMessage]="vMMessageEmpty" [placeholder]="vMessageSelect" appendTo="body"      ></p-dropdown>            </td>
 
   
-            <td style="min-width:7rem" pFrozenColumn alignFrozen="right">
+            <td style="min-width:7rem" pFrozenColumn alignFrozen="right" *ngIf="bSystemCreator">
     
-                <button pButton icon="pi pi-save" class="text-blue-500 p-button-text"
+                <button  pButton icon="pi pi-save" class="text-blue-500 p-button-text"
               (click)="editOption(data)" pTooltip="Editar" tooltipPosition="bottom"></button>
     
                <button pButton icon="pi pi-trash" class="text-red-500 p-button-text"

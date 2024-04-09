@@ -1,15 +1,9 @@
 <p-toast key="tst" [baseZIndex]="99999"></p-toast>
 <p-confirmPopup key="deleteDetalle"></p-confirmPopup>
 
-<p-panel [header]="'AGENDA SEMANAL  ' + this.lsComunity.vname_comunity ">
+<p-panel [header]="'AGENDA SEMANAL  ' + this.lsComunity.vname_comunity "  *ngIf="vactive_agenda" >
 
-    <h1>HORA ACTUAL: {{ horaActual }}</h1>
-
-
-    <h1>HORA SERVIDOR: {{ hourback }}</h1>
-
-
-    <div class="" *ngIf="vactive_agenda" >
+    <div class="">
         <form [formGroup]="formAgenda">
             <div class="p-fluid p-formgrid grid">
               <div class="col-12 md:col-3">

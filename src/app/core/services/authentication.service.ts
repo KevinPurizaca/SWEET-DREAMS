@@ -9,6 +9,8 @@ import { HttpCoreService } from "./httpCore.service";
 import { ConfirmationService } from 'primeng/api';
 import { environment } from "src/environments/environment";
 import { JwtHelperService } from "@auth0/angular-jwt";
+import * as CryptoJS from 'crypto-js';
+
 @Injectable()
 export class AuthenticationService {
   // private secretKey = environment.secretKeyEncript;
@@ -46,13 +48,18 @@ export class AuthenticationService {
         if (res.isSuccess) {        
           let _menu = this.organizarDatosPorModulo(res.item.menu);
           let menu_forma:any[] =[]; 
+
           menu_forma.push({
             items:[
                 ..._menu
             ]
-          })
-          localStorage.setItem('menu', JSON.stringify(menu_forma));
-          localStorage.setItem('userdata', JSON.stringify(res.item.userdata));
+          });
+
+          const userDataEncriptado = CryptoJS.AES.encrypt(JSON.stringify(res.item.userdata),environment.secretKeyEncript).toString();
+          const menuEncriptado = CryptoJS.AES.encrypt(JSON.stringify(menu_forma), environment.secretKeyEncript).toString();
+ 
+          localStorage.setItem('menu', menuEncriptado);
+          localStorage.setItem('userdata', userDataEncriptado);
           localStorage.setItem('token', res.token);
 
 
@@ -158,6 +165,10 @@ export class AuthenticationService {
             icon: 'pi pi-' + objeto.vicon_option, // Reemplaza 'vicon_option' por el nombre real del campo de ícono
             routerLink: [objeto.vurl_module, objeto.vurl_option].join(''),// Concatena las URL del módulo y la opción
             iid_comunity : objeto.iid_comunity,
+            baccess_create: objeto.baccess_create,
+            baccess_delete: objeto.baccess_delete,
+            baccess_update: objeto.baccess_update,
+            baccess_view: objeto.baccess_view,
         });
     });
 

@@ -3,9 +3,9 @@
 
 
     <a class="layout-topbar-logo" routerLink="/inicio/home">
-        <img *ngIf="userData.iid_comunity_user" src="{{userData.vurl_image_comunity_user}}" alt="logo" 
+        <img *ngIf="userData.iid_comunity_user && userData.iid_profile_user != 1" src="{{userData.vurl_image_comunity_user}}" alt="logo" 
         style="height: 4.5rem;width: 4.5rem;border-radius: 1rem;">
-        <span>{{userData.iid_comunity_user ? userData.vname_comunity_user: userData.vname_profile_user}}</span>
+        <span>{{userData.iid_comunity_user && userData.iid_profile_user != 1 ? userData.vname_comunity_user: userData.vname_profile_user}}</span>
     </a>
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">

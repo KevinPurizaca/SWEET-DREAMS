@@ -10,6 +10,8 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
 import { Endpoints } from 'src/app/core/config/endpoints';
+import { Router } from '@angular/router';
+import { UtilService } from 'src/app/core/util/util.services';
 
 @Component({
   selector: 'app-options-menu',
@@ -21,157 +23,167 @@ import { Endpoints } from 'src/app/core/config/endpoints';
   templateUrl: './options-menu.component.html',
   styleUrl: './options-menu.component.scss'
 })
-export class OptionsMenuComponent implements OnInit{
+export class OptionsMenuComponent implements OnInit {
 
   selectedIcon: string | undefined;
   selectedIconOption: string | undefined;
 
 
-  formSearch:FormGroup;
-  formRegisterEditModule:FormGroup;
-  formRegisterEditOption:FormGroup;
+  formSearch: FormGroup;
+  formRegisterEditModule: FormGroup;
+  formRegisterEditOption: FormGroup;
 
-  lstModules:any[]=[];
-  lstOptions:any[]=[];
+  lstModules: any[] = [];
+  lstOptions: any[] = [];
 
 
-  lstStatus:ComboModel[]=[];
-  lstState:ComboModel[]=[]//Form Estados de tabla activo,inactivo ;
+  lstStatus: ComboModel[] = [];
+  lstState: ComboModel[] = []//Form Estados de tabla activo,inactivo ;
 
-  lstIcons:ComboModel[]=[];
+  lstIcons: ComboModel[] = [];
   icons: any[] = [];
 
 
-  totalRecord:number = 0;
-  first:number = 0;
+  totalRecord: number = 0;
+  first: number = 0;
   rowsDefault: number = ROWS_DEFAULT;
   rowsOptions: any[] = ROWS_OPTIONS;
-  vMessageEmpty : string=MESSAGE_EMPTY;
-  vMessageSelect : string=MESSAGE_SELECT;
+  vMessageEmpty: string = MESSAGE_EMPTY;
+  vMessageSelect: string = MESSAGE_SELECT;
 
-  req ={
-    iid_module:-1,
-    vdescription_module:'',
-    vname_module:'',
-    istate_record:-1,
+  req = {
+    iid_module: -1,
+    vdescription_module: '',
+    vname_module: '',
+    istate_record: -1,
     iindex: 0,
     ilimit: ROWS_DEFAULT
   }
 
-  reqOptions ={
-    iid_option:-1,
-    iid_module:-1,
-    vname_option:'',
-    vdescription_option:'',
-    istate_record:-1,
+  reqOptions = {
+    iid_option: -1,
+    iid_module: -1,
+    vname_option: '',
+    vdescription_option: '',
+    istate_record: -1,
     iindex: 0,
     ilimit: ROWS_DEFAULT
   }
 
 
 
-  vmEditRegisterModule:boolean = false;
-  titleEditRegisterModule:string = '';
+  vmEditRegisterModule: boolean = false;
+  titleEditRegisterModule: string = '';
   submitted: boolean = false;
 
-  vmEditRegisterOption:boolean = false;
-  titleEditRegisterOptions:string = 'Opciones';
+  vmEditRegisterOption: boolean = false;
+  titleEditRegisterOptions: string = 'Opciones';
 
-  lsModuleDto! :any;
-  lsOptionsDto! :any;
+  lsModuleDto!: any;
+  lsOptionsDto!: any;
 
-  firstOptions:number = 0;
-  totalRecordOptions:number = 0;
+  firstOptions: number = 0;
+  totalRecordOptions: number = 0;
 
-  
+
   paramTDState = PARAMS_AUXILIAR.STATES;
 
+  loadingData :boolean = false;
+  loadingSave:boolean = false;
+
+  bUpdateAccess :boolean = false;
+  bDeleteAccess :boolean = false;
+  bCreateAccess :boolean = false;
+  bSystemCreator :boolean = false;
+  
   constructor(
-    fsm:FormBuilder,
-    frem:FormBuilder,
-    freo:FormBuilder,
+    fsm: FormBuilder,
+    frem: FormBuilder,
+    freo: FormBuilder,
 
     private iconService: IconService,
     private httpCoreService: HttpCoreService,
     private commonService: CommonService,
     private confirmationService: ConfirmationService,
-  ){
+    private utilService: UtilService,
+    private router: Router,
+  ) {
     this.formSearch = fsm.group({
-      txtTitle:[''],
-      intVisible:[-1],
-      intSubMenu : [-1],
+      txtTitle: [''],
+      intVisible: [-1],
+      intSubMenu: [-1],
       intState: [-1]
     });
 
     this.formRegisterEditModule = frem.group({
-      txtName:   ['',[Validators.required]],
-      txtDescription:   ['',[Validators.required]],
-      txtUrl:     ['',[Validators.required]],
-      intOrder:   ['',[Validators.required]],
-      txtIcon:    [-1,[Validators.required]],//Abrira un listado de iconos con un desplegables //It will open a list of icons with a drop-down menu
-      intVisible: [-1],
-      intSubMenu: [-1],
-      intState :  [-1],
+      txtName: ['', [Validators.required]],
+      txtDescription: ['', [Validators.required]],
+      txtUrl: ['', [Validators.required]],
+      intOrder: ['', [Validators.required]],
+      txtIcon: [-1, [Validators.required]],//Abrira un listado de iconos con un desplegables //It will open a list of icons with a drop-down menu
+      intVisible: [false],
+      intSubMenu: [false],
+      intState: [-1],
 
     });
     this.formRegisterEditOption = freo.group({
-      txtName:   ['',[Validators.required]],
-      txtDescription:   ['',[Validators.required]],
-      txtUrl:     ['',[Validators.required]],
-      intOrder:   ['',[Validators.required]],
-      txtIcon:    [-1,[Validators.required]],//Abrira un listado de iconos con un desplegables //It will open a list of icons with a drop-down menu
+      txtName: ['', [Validators.required]],
+      txtDescription: ['', [Validators.required]],
+      txtUrl: ['', [Validators.required]],
+      intOrder: ['', [Validators.required]],
+      txtIcon: [-1, [Validators.required]],//Abrira un listado de iconos con un desplegables //It will open a list of icons with a drop-down menu
       intVisible: [false],
-      intState :  [-1],
+      intState: [-1],
 
     })
-    
+
   }
 
   ngOnInit(): void {
     this.loadStateCB();
     this.getIcons();
-
+    this.getSecurity();
     this.loadDataModule(this.req);
   }
 
-  viewModal(type:number,item:any){
+  viewModal(type: number, item: any) {
     //Tipe 1 == Mode Register / Tipe 2 == Mode Edit
-    switch(type){
+    switch (type) {
       case 1:
         this.formRegisterEditModule.markAsUntouched();
-        this.formRegisterEditModule.reset();        
+        this.formRegisterEditModule.reset();
         this.lsModuleDto = {};
         this.lsModuleDto.iid_modulo = 0;
-        this.titleEditRegisterModule  = "Registrar Modulo"
+        this.titleEditRegisterModule = "Registrar Modulo"
         this.vmEditRegisterModule = true;
         break;
-      case 2 :
-        this.titleEditRegisterModule  = "Editar Modulo"
+      case 2:
+        this.titleEditRegisterModule = "Editar Modulo"
         this.lsModuleDto = item;
-        this.lsModuleDto.iid_modulo = item.iid_module;        
-        this.selectedIcon =  item.vicon_module;
-        this.vmEditRegisterModule  = true;
+        this.lsModuleDto.iid_modulo = item.iid_module;
+        this.selectedIcon = item.vicon_module;
+        this.vmEditRegisterModule = true;
         break;
-      case 3 :
+      case 3:
         this.formRegisterEditOption.markAsUntouched();
-        this.formRegisterEditOption.reset();  
-        this.titleEditRegisterOptions  = "Opciones Modulo"
+        this.formRegisterEditOption.reset();
+        this.titleEditRegisterOptions = "Opciones Modulo"
         this.lsOptionsDto = {};
-        this.lsOptionsDto.iid_module = item.iid_module;  
+        this.lsOptionsDto.iid_module = item.iid_module;
         this.reqOptions.iid_module = item.iid_module;
-        this.loadDataOption(this.reqOptions)  ;    
-        this.vmEditRegisterOption  = true;
+        this.loadDataOption(this.reqOptions);
+        this.vmEditRegisterOption = true;
         break;
     }
   }
 
   //#region  MODULE
 
-  loadDataModule(req:any){
-    this.lstModules =[];
-    this.httpCoreService.post(req,Endpoints.GetListModule).subscribe(res =>{
-      if(res.isSuccess){
-        this.lstModules = res.data;       
+  loadDataModule(req: any) {
+    this.lstModules = [];
+    this.httpCoreService.post(req, Endpoints.GetListModule).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstModules = res.data;
         this.totalRecord = res.iTotal_record;
       }
       else {
@@ -181,7 +193,7 @@ export class OptionsMenuComponent implements OnInit{
 
   }
 
-  saveModule(){
+  saveModule() {
     this.submitted = true;
 
     let value = this.formRegisterEditModule.value;
@@ -189,21 +201,21 @@ export class OptionsMenuComponent implements OnInit{
       this.formRegisterEditModule.controls[c].markAsTouched();
     }
 
-    let req ={
-      iid_module          : this.lsModuleDto.iid_modulo,
-      vname_module        : value.txtName  ,
-      vdescription_module : value.txtDescription  ,
-      vurl_module         : value.txtUrl  ,
-      vicon_module        : this.selectedIcon ?  this.selectedIcon : ''  ,
-      iorder_module       : value.intOrder  ,
-      bvisible_module     : value.intVisible  ,
-      bsub_menu_module    : value.intSubMenu  ,
-      istate_record       : value.intState  ,
-      iuser_token         : 1,//value.  
+    let req = {
+      iid_module: this.lsModuleDto.iid_modulo,
+      vname_module: value.txtName,
+      vdescription_module: value.txtDescription,
+      vurl_module: this.bSystemCreator ? value.txtUrl :this.lsModuleDto.vurl_module,
+      vicon_module: this.selectedIcon ? this.selectedIcon : '',
+      iorder_module: value.intOrder,
+      bvisible_module: this.bSystemCreator ? value.intVisible : this.lsModuleDto.bvisible_module ,
+      bsub_menu_module: this.bSystemCreator ? value.intSubMenu : this.lsModuleDto.bsub_menu_module,
+      istate_record: value.intState
     }
 
-    this.httpCoreService.post(req,Endpoints.RegisterModule).subscribe(res => {
-      if(res.isSuccess){
+ 
+    this.httpCoreService.post(req, Endpoints.RegisterModule).subscribe(res => {
+      if (res.isSuccess) {
         this.loadDataModule(this.req);
         this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ACTUALIZADA_REGISTRADA);
         this.vmEditRegisterModule = false;
@@ -212,10 +224,9 @@ export class OptionsMenuComponent implements OnInit{
         this.commonService.HanddleErrorMessage(res);
       }
     })
-    // this.lsModuleDto.icon =this.selectedIcon ?  'pi pi-' + this.selectedIcon : '';
   }
 
-  deleteModule(event:any,item:any){
+  deleteModule(event: any, item: any) {
     this.confirmationService.confirm({
       key: 'deleteDetalle',
       target: event.target || new EventTarget(),
@@ -223,8 +234,8 @@ export class OptionsMenuComponent implements OnInit{
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
       accept: () => {
-    
-        this.httpCoreService.delete(Endpoints.DeleteModule+item.iid_module).subscribe(res => {
+
+        this.httpCoreService.delete(Endpoints.DeleteModule + item.iid_module).subscribe(res => {
           if (res.isSuccess) {
             this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ELIMINADA);
             this.loadDataModule(this.req);
@@ -233,22 +244,22 @@ export class OptionsMenuComponent implements OnInit{
             this.commonService.HanddleErrorMessage(res);
           }
         })
-    
+
       },
       reject: () => { }
     });
   }
 
-//#endregion
+  //#endregion
 
   //#region OPTIONS
 
-  loadDataOption(req:any){
-    this.lstOptions =[];
+  loadDataOption(req: any) {
+    this.lstOptions = [];
 
-    this.httpCoreService.post(req,Endpoints.GetListOption).subscribe(res => {
-      if(res.isSuccess){
-        this.lstOptions = res.data;       
+    this.httpCoreService.post(req, Endpoints.GetListOption).subscribe(res => {
+      if (res.isSuccess) {
+        this.lstOptions = res.data;
         this.totalRecordOptions = res.iTotal_record;
       }
       else {
@@ -258,27 +269,27 @@ export class OptionsMenuComponent implements OnInit{
   }
 
   saveOrEditOption(isEdit: boolean, data: any) {
-    
-    if(!isEdit){
+
+    if (!isEdit) {
       for (let c in this.formRegisterEditOption.controls) {
         this.formRegisterEditOption.controls[c].markAsTouched();
       }
       if (this.formRegisterEditOption.valid) {
       }
-      else{
+      else {
         return
       }
     }
 
     this.httpCoreService.post(data, Endpoints.RegisterOption).subscribe(res => {
-        if (res.isSuccess) {
-          this.formRegisterEditOption.reset();
-          this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ACTUALIZADA_REGISTRADA);
-          this.reqOptions.iid_module = data.iid_module;
-          this.loadDataOption(this.reqOptions);
-        } else {
-          this.commonService.HanddleErrorMessage(res);
-        }
+      if (res.isSuccess) {
+        this.formRegisterEditOption.reset();
+        this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ACTUALIZADA_REGISTRADA);
+        this.reqOptions.iid_module = data.iid_module;
+        this.loadDataOption(this.reqOptions);
+      } else {
+        this.commonService.HanddleErrorMessage(res);
+      }
     });
 
   }
@@ -295,7 +306,6 @@ export class OptionsMenuComponent implements OnInit{
       vicon_option: value.txtIcon,
       iorder_option: value.intOrder,
       bvisible_option: value.intVisible,
-
       istate_record: value.intState,
       iuser_token: 1
     };
@@ -306,13 +316,13 @@ export class OptionsMenuComponent implements OnInit{
   editOption(item: any) {
     let data: any = {
       ...item,
-      // iid_option: this.lsOptionsDto.iid_option
+
     };
 
     this.saveOrEditOption(true, data);
   }
 
-  deleteOption(event:any,item:any){
+  deleteOption(event: any, item: any) {
     this.confirmationService.confirm({
       key: 'deleteDetalle',
       target: event.target || new EventTarget(),
@@ -320,8 +330,8 @@ export class OptionsMenuComponent implements OnInit{
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
       accept: () => {
-    
-        this.httpCoreService.delete(Endpoints.DeleteOption+item.iid_option).subscribe(res => {
+
+        this.httpCoreService.delete(Endpoints.DeleteOption + item.iid_option).subscribe(res => {
           if (res.isSuccess) {
             this.commonService.HanddleInfoMessage(MSG_CRUD.MSG_ELIMINADA);
             this.reqOptions.iid_module = item.iid_module;
@@ -331,13 +341,12 @@ export class OptionsMenuComponent implements OnInit{
             this.commonService.HanddleErrorMessage(res);
           }
         })
-    
       },
       reject: () => { }
     });
   }
 
-  
+
   changePageOptions(event: any) {
     this.reqOptions.iindex = event.first;
     this.reqOptions.ilimit = event.rows;
@@ -350,56 +359,63 @@ export class OptionsMenuComponent implements OnInit{
 
   //#region CB_ICONS
 
-  getIcons(){
+  getIcons() {
 
-  this.iconService.getIcons().subscribe(data => {
-    // Filter out icons marked as deprecated
-    let filteredIcons = data.filter(value => !value.icon.tags.includes('deprecate'));
+    this.iconService.getIcons().subscribe(data => {
+      // Filter out icons marked as deprecated
+      let filteredIcons = data.filter(value => !value.icon.tags.includes('deprecate'));
 
-    // Sort icons by name
-    filteredIcons.sort((icon1, icon2) => {
+      // Sort icons by name
+      filteredIcons.sort((icon1, icon2) => {
         return icon1.properties.name.localeCompare(icon2.properties.name);
-    });
+      });
 
-    // Map icons to desired format
-    this.icons = filteredIcons.map(icon => ({
+      // Map icons to desired format
+      this.icons = filteredIcons.map(icon => ({
         id: icon.properties.id,
         value: icon.properties.name
-    }));
+      }));
 
-    // Assign icons to lstIcons using the same mapped format
-    this.lstIcons = this.icons.slice(); // You can use .slice() to create a copy
+      // Assign icons to lstIcons using the same mapped format
+      this.lstIcons = this.icons.slice(); // You can use .slice() to create a copy
     });
   }
 
-  selectIcon(event:any){
-     this.selectedIcon =event.value;
+  selectIcon(event: any) {
+    this.selectedIcon = event.value;
   }
 
-  filterIcon(event:any){
+  filterIcon(event: any) {
     const searchText = event.filter || '';
 
     if (!searchText) {
-      this.lstIcons = this.icons;/*.map((x:any)=>{
-        return{            
-          id:x.id,
-          value:x.value,
-        }
-      })*/
-  }
-  else {
-      this.lstIcons = this.icons.filter((x:any) => x.value.includes(searchText));
-  }
-
+      this.lstIcons = this.icons;
+    }
+    else {
+      this.lstIcons = this.icons.filter((x: any) => x.value.includes(searchText));
+    }
   }
 
   //#endregion
 
-  loadStateCB(){
+  loadStateCB() {
     this.httpCoreService.getDataCb(this.paramTDState).subscribe(res => {
-      if(res.isSuccess){
+      if (res.isSuccess) {
         this.lstState = res.data;
       }
     })
+  }
+
+
+  getSecurity(){
+    const permisos =this.utilService.getSeguridad(this.router.url);
+    const userdata = this.utilService.getItemStorage('userdata');
+    
+    this.bUpdateAccess = permisos.baccess_update;
+    this.bDeleteAccess = permisos.baccess_delete;
+    this.bCreateAccess = permisos.baccess_create;  
+    this.bSystemCreator = userdata.iid_profile_user ==1 ?true:false;  
+
+    
   }
 }

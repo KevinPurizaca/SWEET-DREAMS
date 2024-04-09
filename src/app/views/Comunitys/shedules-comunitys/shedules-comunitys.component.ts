@@ -94,19 +94,7 @@ export class ShedulesComunitysComponent implements OnInit {
 
       this.fechaActual = new Date();
       this.currentWeek = this.getWeekNumber(this.fechaActual, 0); // Aumenta 7 días
-      let hora_dia = this.obtenerDiaYHora(0);
 
-      // this.loadDataDiaAgenda();
-
-      interval(1000).pipe(
-        map(() => {
-          const fechaActual = new Date();
-          return fechaActual.toLocaleTimeString('en-US', {hour12: false});
-        })
-      ).subscribe(hora => {
-        this.horaActual = hora;
-        this.vactive_agenda = this.validarAperturaAgenda(hora);
-      });
       
     });
   }
@@ -123,8 +111,8 @@ export class ShedulesComunitysComponent implements OnInit {
         this.sheduleAvailable = res.sheduleAvailable;    
         this.lstTypeSream = res.normalAvailable ? this.lstTypeSream : this.lstTypeSream.filter(x => x.id != 1);
         this.lstTypeSream = res.vipAvailable ? this.lstTypeSream : this.lstTypeSream.filter(x => x.id != 2);
-
-
+        this.vactive_agenda = res.sheduleByDayAndHourAvailable;
+        
         this.hourback = res.horaAgenda
         
       }  
@@ -135,6 +123,7 @@ export class ShedulesComunitysComponent implements OnInit {
     const parts: string[] = this.router.url.split('/');
     const url = [parts[1],'/',parts[2],'/' ,this.nameComunity].join('');
     const permisos =this.utilService.getOptionGroupComunity(url);
+    console.log("permisos:", permisos)
 
     let req = {
       iid_comunity: permisos.iid_comunity,
@@ -172,7 +161,6 @@ export class ShedulesComunitysComponent implements OnInit {
       istate_record: 1,
     }
     this.httpCoreService.post(req, Endpoints.RegisterShedule).subscribe(res => {
-      console.log("res:", res)
       if (res.isSuccess) {
         this.loadDataDiaAgenda();        
         this.loadDataShedule();
@@ -239,17 +227,6 @@ export class ShedulesComunitysComponent implements OnInit {
 
 //#endregion
 
-  validarAperturaAgenda(hour:any):boolean{
-    const parts : number [] = hour.split(':');
-    const parts_range :  number [] = this.lsUser.vtime_agenda_range_user.split(':');
-
-    if(parts[0] >= parts_range[0] && parts[1] >= parts_range[1]){      
-      return true;
-    }
-    return false;
-  }
-
-
 
   getWeekNumber(date: Date, daysToAdd: number): number {
     const tempDate: any = new Date(date);
@@ -264,16 +241,13 @@ export class ShedulesComunitysComponent implements OnInit {
                                                           
   }
   
-  obtenerDiaYHora(daysToAdd: number): string {
+  obtenerDiaYHora(): string {
     const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'];
     const fechaActual = new Date();
-    const diaMes = fechaActual.getDate() + daysToAdd ; // Obtiene el día del mes
+    const diaMes = fechaActual.getDate(); // Obtiene el día del mes
     const diaSemana = diasSemana[(diaMes - 1) % 7] ; // Calcula el día de la semana según el día del mes
-    this.positionDay = (diaMes % 7) - 1; // Calcula la posición del día en el array
 
-    this.descriptionSemana = `${diaSemana}  ${diaMes} de [mes] de la Semana Nro. ${this.numberSemana}`; 
-
-    return  `Hoy es ${diaSemana} ${diaMes}  posicion ${this.positionDay} del array`;
+    return  `${diaSemana}  ${diaMes} de [mes] de la Semana Nro. ${this.numberSemana}`;
   }
   
 
@@ -284,7 +258,7 @@ export class ShedulesComunitysComponent implements OnInit {
 
         let month_name:any =  this.lstMonth.find((x:any) => x.id == new Date().getMonth() + 1).vvalue1;//fechaActual.getMonth() ;//this.lstMonth;
         
-        this.descriptionSemana = this.descriptionSemana.replace('[mes]', month_name);
+        this.descriptionSemana = this.obtenerDiaYHora().replace('[mes]', month_name);
       }
     });
   }

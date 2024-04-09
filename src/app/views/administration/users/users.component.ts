@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { Endpoints } from 'src/app/core/config/endpoints';
 import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
@@ -7,6 +8,7 @@ import { PARAMS_AUXILIAR, PATTERNS, ROWS_DEFAULT, ROWS_OPTIONS, TimeZone } from 
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
 import { ComboModel } from 'src/app/core/util/combo';
+import { UtilService } from 'src/app/core/util/util.services';
 import { SharedModule } from 'src/app/shared/shared.module';
 @Component({
   selector: 'app-users',
@@ -54,6 +56,14 @@ export class UsersComponent implements OnInit {
   rowsDefault: number = ROWS_DEFAULT;
   rowsOptions: any[] = ROWS_OPTIONS;
 
+  loadingData :boolean = false;
+  loadingSave:boolean = false;
+
+  bUpdateAccess :boolean = false;
+  bDeleteAccess :boolean = false;
+  bCreateAccess :boolean = false;
+  bSystemCreator :boolean = false;
+  
   req = {
     iid_user: -1,
     vcode: "",
@@ -78,6 +88,9 @@ export class UsersComponent implements OnInit {
     private httpCoreService: HttpCoreService,
     private commonService: CommonService,
     private confirmationService: ConfirmationService,
+    private utilService: UtilService,
+    private router: Router,
+
 
   ) {
     this.formSearch = fs.group({
@@ -121,6 +134,7 @@ export class UsersComponent implements OnInit {
     this.loadDataComunityUser();
 
     this.loadData(this.req);
+    this.getSecurity();
   }
 
 
@@ -152,6 +166,7 @@ export class UsersComponent implements OnInit {
 
     if (this.formRegisterEdit.valid) {
 
+      this.loadingSave = true;
       let req = {
         iid_user: this.lsUserDto.iid_user,
         vfirst_name: value.txtFirstName,
@@ -174,8 +189,8 @@ export class UsersComponent implements OnInit {
         }
         else {
           this.commonService.HanddleErrorMessage(res);
-
         }
+        this.loadingSave = false;
       })
 
 
@@ -183,12 +198,15 @@ export class UsersComponent implements OnInit {
   }
 
   loadData(req: any) {
-    this.httpCoreService.post(req, Endpoints.GetListUsers).subscribe(res => {
+    this.loadingData = true;
+    this.lstUsers = [];
 
+    this.httpCoreService.post(req, Endpoints.GetListUsers).subscribe(res => {
       if (res.isSuccess) {
         this.lstUsers = res.data;
         this.totalRecord = res.iTotal_record;
       }
+      this.loadingData = false;
     });
   }
 
@@ -208,6 +226,8 @@ export class UsersComponent implements OnInit {
     }
     this.httpCoreService.post(req, Endpoints.GetListProfile).subscribe(res => {
       if (res.isSuccess) {
+        const userdata = this.utilService.getItemStorage('userdata');
+
         this.lstProfile = res.data.map((x: any) => {
           return {
             id: x.iid_profile,
@@ -215,6 +235,10 @@ export class UsersComponent implements OnInit {
             bvalue1: x.buser_member,
           }
         });
+
+        if(userdata.iid_profile_user != 1){
+          this.lstProfile = this.lstProfile.filter( (p:any) => p.id != 1)
+        }
 
 
 
@@ -289,4 +313,17 @@ export class UsersComponent implements OnInit {
     this.first = event.first;
     this.loadData(this.req);
   }
+
+  getSecurity(){
+    const permisos =this.utilService.getSeguridad(this.router.url);
+    const userdata = this.utilService.getItemStorage('userdata');
+    
+    this.bUpdateAccess = permisos.baccess_update;
+    this.bDeleteAccess = permisos.baccess_delete;
+    this.bCreateAccess = permisos.baccess_create;  
+    this.bSystemCreator = userdata.iid_profile_user ==1 ?true:false;  
+
+    
+  }
+
 }

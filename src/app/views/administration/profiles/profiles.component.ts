@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { Endpoints } from 'src/app/core/config/endpoints';
 import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
@@ -7,6 +8,7 @@ import { PARAMS_AUXILIAR, ROWS_DEFAULT, ROWS_OPTIONS } from 'src/app/core/config
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
 import { ComboModel } from 'src/app/core/util/combo';
+import { UtilService } from 'src/app/core/util/util.services';
 import { SharedModule } from 'src/app/shared/shared.module';
 @Component({
   selector: 'app-profiles',
@@ -41,6 +43,15 @@ export class ProfilesComponent implements OnInit {
   lstState: ComboModel[] = [];
   paramTDState = PARAMS_AUXILIAR.STATES;
 
+  loadingData :boolean = false;
+  loadingSave:boolean = false;
+  loadingDetail :boolean = false;
+
+  bUpdateAccess :boolean = false;
+  bDeleteAccess :boolean = false;
+  bCreateAccess :boolean = false;
+  bSystemCreator :boolean = false;
+
   req = {
     iid_profile: -1,
     vname_profile: '',
@@ -57,6 +68,8 @@ export class ProfilesComponent implements OnInit {
     private httpCoreService: HttpCoreService,
     private commonService: CommonService,
     private confirmationService: ConfirmationService,
+    private utilService: UtilService,
+    private router: Router,
   ) {
     this.formSearch = fs.group({
       txtName: [''],
@@ -73,6 +86,7 @@ export class ProfilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getSecurity();
     this.loadStateCB();
     this.loadData(this.req);
   }
@@ -80,6 +94,7 @@ export class ProfilesComponent implements OnInit {
   viewModal(type: number, item: any) {
     //Tipe 1 == Mode Register / Tipe 2 == Mode Edit
     this.lstOptionsModule = [];
+    this.loadingDetail = true;
 
     switch (type) {
       case 1:
@@ -104,13 +119,14 @@ export class ProfilesComponent implements OnInit {
 
 
   loadData(req: any) {
+    this.loadingData = true;
     this.lstProfiles = [];
     this.httpCoreService.post(req, Endpoints.GetListProfile).subscribe(res => {
-
       if (res.isSuccess) {
         this.lstProfiles = res.data;
         this.totalRecord = res.iTotal_record;
       }
+      this.loadingData = false;
     })
   }
 
@@ -121,6 +137,16 @@ export class ProfilesComponent implements OnInit {
     this.loadData(this.req);
   }
 
+  searchProfile(){
+    let value = this.formSearch.value;
+
+    this.req.vname_profile = value.txtName;
+    this.req.vdescription_profile = value.txtDescription;
+    this.req.istate_record = value.intState;
+    this.req.iindex = 0;
+
+    this.loadData(this.req);
+  }
 
 
   loadOptionsByModule() {
@@ -140,6 +166,7 @@ export class ProfilesComponent implements OnInit {
       if (res.isSuccess) {
         this.lstOptionsModule = res.data;
       }
+      this.loadingDetail = false;
     })
   }
 
@@ -149,6 +176,8 @@ export class ProfilesComponent implements OnInit {
       if (res.isSuccess) {
         this.lstOptionsModule = res.data;
       }
+      this.loadingDetail = false;
+
     })
   }
 
@@ -161,8 +190,9 @@ export class ProfilesComponent implements OnInit {
       this.formRegisterEditProfile.controls[c].markAsTouched();
     }
     if (this.formRegisterEditProfile.valid) {
-
-      let options: any[] = this.lstOptionsModule.map((x: any) => ({
+      this.loadingSave = true;
+      
+      let options: any[] = this.lstOptionsModule.filter((p:any) => p.flgEdit).map((x: any) => ({
         iid_profile_access: x.iid_profile_access || 0,
         iid_module: x.iid_module,
         iid_option: x.iid_option,
@@ -172,7 +202,6 @@ export class ProfilesComponent implements OnInit {
         baccess_update: !!x.baccess_update,
         baccess_delete: !!x.baccess_delete,
       }));
-
 
       let req = {
         iid_profile: this.lsProfilesDto.iid_profile,
@@ -190,6 +219,8 @@ export class ProfilesComponent implements OnInit {
         } else {
           this.commonService.HanddleErrorMessage(res.message);
         }
+        this.loadingSave = false;
+
       })
     }
   }
@@ -229,11 +260,15 @@ export class ProfilesComponent implements OnInit {
       }
     })
   }
+
   selectCheckAll(select: any, colum: any, event: any) {
     select.forEach(function (value: any) {
+      value.flgEdit = true;
+
       switch (colum) {
         case 1:
-          value.baccess_view = event.checked; break;
+          value.baccess_view = event.checked;
+          break;
         case 2:
           value.baccess_create = event.checked; break;
         case 3:
@@ -246,6 +281,8 @@ export class ProfilesComponent implements OnInit {
 
   selectCheckAllModule(lista: any, idModule: any, colum: any, event: any) {
     lista.filter((x: any) => x.iid_module == idModule).forEach((value: any) => {
+      value.flgEdit = true;
+
       switch (colum) {
         case 1:
           value.baccess_view = event.checked; break;
@@ -260,6 +297,8 @@ export class ProfilesComponent implements OnInit {
   }
 
   selectCheck(select: any, colum: any, event: any) {
+    select.flgEdit = true;
+
     switch (colum) {
       case 1:
         select.baccess_view = event.checked; break;
@@ -270,5 +309,18 @@ export class ProfilesComponent implements OnInit {
       case 4:
         select.baccess_delete = event.checked; break;
     }
+  }
+
+
+  getSecurity(){
+    const permisos =this.utilService.getSeguridad(this.router.url);
+    const userdata = this.utilService.getItemStorage('userdata');
+    
+    this.bUpdateAccess = permisos.baccess_update;
+    this.bDeleteAccess = permisos.baccess_delete;
+    this.bCreateAccess = permisos.baccess_create;  
+    this.bSystemCreator = userdata.iid_profile_user ==1 ?true:false;  
+
+    
   }
 }

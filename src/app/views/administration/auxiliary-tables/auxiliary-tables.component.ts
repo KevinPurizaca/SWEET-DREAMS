@@ -1,6 +1,7 @@
 import { HttpBackend } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { Endpoints } from 'src/app/core/config/endpoints';
 import { MESSAGE_EMPTY, MESSAGE_SELECT, MSG_CRUD } from 'src/app/core/config/mensajes';
@@ -8,6 +9,7 @@ import { PARAMS_AUXILIAR, ROWS_DEFAULT, ROWS_OPTIONS } from 'src/app/core/config
 import { CommonService } from 'src/app/core/services/common.service';
 import { HttpCoreService } from 'src/app/core/services/httpCore.service';
 import { ComboModel } from 'src/app/core/util/combo';
+import { UtilService } from 'src/app/core/util/util.services';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
@@ -54,6 +56,16 @@ export class AuxiliaryTablesComponent implements OnInit {
 
   paramTDState = PARAMS_AUXILIAR.STATES;
 
+  bUpdateAccess:boolean = false;
+  bDeleteAccess:boolean = false;
+  bCreateAccess:boolean = false;
+
+  loadingDataHead :boolean = false;
+  loadingDataTbleDetail :boolean = false;
+  loadingSaveHead :boolean = false;
+  loadingSaveDetail :boolean = false;
+  loadingEditDetail :boolean = false;
+
   req ={
     iid_table_headboard:-1,
     vdescription:'',
@@ -89,9 +101,12 @@ export class AuxiliaryTablesComponent implements OnInit {
     fs:FormBuilder,
     fr:FormBuilder,
     fred:FormBuilder,
+    private router: Router,
     private httpCoreService: HttpCoreService,
     private commonService: CommonService,
     private confirmationService: ConfirmationService,
+    private utilService: UtilService,
+
   ){
     this.formSearch = fs.group({
       txtDescription :[''],
@@ -124,7 +139,9 @@ export class AuxiliaryTablesComponent implements OnInit {
   ngOnInit(): void {
     this.loadStateCB();
     this.loadDataTableHeadboard(this.req);
+    this.getSecurity();
   }
+
 
   viewModal(type:number,item:any){
     //Tipe 1 == Mode Register / Tipe 2 == Mode Edit
@@ -158,17 +175,31 @@ export class AuxiliaryTablesComponent implements OnInit {
   //#region  TABLE HEADBOARD
 
   loadDataTableHeadboard(req:any){
+    this.loadingDataHead = true;    
+
     this.lstTableHeadboard = [];
     this.httpCoreService.post(req,Endpoints.GetListTableHead).subscribe(res => {
       if(res.isSuccess){
-        this.lstTableHeadboard = res.data;       
+        this.lstTableHeadboard = res.data;   
         this.totalRecord = res.iTotal_record;
       }
       else {
         this.commonService.HanddleErrorMessage(res);
       }
+      this.loadingDataHead = false;    
+
     })
   }
+  searchTableHead(){
+    let value = this.formSearch.value;
+
+    this.req.istate_record = value.intState;
+    this.req.vdescription = value.txtDescription;
+    this.req.iindex = 0;
+
+    this.loadDataTableHeadboard(this.req);
+  }
+
 
   saveTableHeadboard(){
     this.submitted = true;
@@ -179,6 +210,8 @@ export class AuxiliaryTablesComponent implements OnInit {
     }
 
     if (this.formRegisterEditTableHeadboard.valid) {
+      this.loadingSaveHead = true;
+
       let req ={
         iid_table_headboard: this.lsTableHeadboardDto.iid_table_headboard,
         vdescription:value.txtDescription,
@@ -194,6 +227,8 @@ export class AuxiliaryTablesComponent implements OnInit {
         else {
           this.commonService.HanddleErrorMessage(res);
         }
+        this.loadingSaveHead = false;
+
       })
     }
   }
@@ -237,6 +272,7 @@ export class AuxiliaryTablesComponent implements OnInit {
   loadDataTableDetail(iid_table_headboard:any){
       this.lstTableDetail = [];
       this.reqDetail.iid_table_headboard =  iid_table_headboard;
+      this.loadingDataTbleDetail = true;
 
       this.httpCoreService.post(this.reqDetail,Endpoints.GetListTableDetail).subscribe(res => {
         if(res.isSuccess){
@@ -246,6 +282,7 @@ export class AuxiliaryTablesComponent implements OnInit {
         else {
           this.commonService.HanddleErrorMessage(res);
         }
+        this.loadingDataTbleDetail = false;
       })
   }
 
@@ -258,6 +295,8 @@ export class AuxiliaryTablesComponent implements OnInit {
       if (this.formRegisterEditTableDetail.valid) {
       }
       else{
+        this.loadingSaveDetail  = false;
+        this.loadingEditDetail  = false;
         return
       }
     }
@@ -270,6 +309,8 @@ export class AuxiliaryTablesComponent implements OnInit {
         } else {
           this.commonService.HanddleErrorMessage(res);
         }
+        this.loadingSaveDetail  = false;
+        this.loadingEditDetail  = false;
     });
 
   }
@@ -293,6 +334,7 @@ export class AuxiliaryTablesComponent implements OnInit {
       iuser_token: 1
     };
 
+    this.loadingSaveDetail  = true;
     this.saveOrEditTableDetail(false, data);
   }
 
@@ -302,6 +344,7 @@ export class AuxiliaryTablesComponent implements OnInit {
       iid_table_headboard: this.lsTableDetailDto.iid_table_headboard
     };
 
+    this.loadingEditDetail  = true;
     this.saveOrEditTableDetail(true, data);
   }
 
@@ -351,6 +394,15 @@ export class AuxiliaryTablesComponent implements OnInit {
         this.lstState = res.data;
       }
     })
+  }
+
+
+  getSecurity(){
+    const permisos =this.utilService.getSeguridad(this.router.url);
+    
+    this.bUpdateAccess = permisos.baccess_update;
+    this.bDeleteAccess = permisos.baccess_delete;
+    this.bCreateAccess = permisos.baccess_create;  
   }
 
 }
